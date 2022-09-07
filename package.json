@@ -1,0 +1,26 @@
+{
+  "name": "visorpreciosferia",
+  "version": "1.0.0",
+  "description": "Aplicación web que permite entregar de manera visualmente fácil la variación de precios de ganado a lo largo de los meses",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hernancasanova/visorPreciosFeria.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hernancasanova/visorPreciosFeria/issues"
+  },
+  "homepage": "https://github.com/hernancasanova/visorPreciosFeria#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "puppeteer": "^17.1.1",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6"
+  }
+}
