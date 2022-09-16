@@ -2,9 +2,11 @@
   "name": "visorpreciosferia",
   "version": "1.0.0",
   "description": "Aplicación web que permite entregar de manera visualmente fácil la variación de precios de ganado a lo largo de los meses",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "babel-node": "babel-node --presets=@babel/preset-env",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec npm run babel-node main.js"
   },
   "repository": {
     "type": "git",
@@ -18,9 +20,21 @@
   },
   "homepage": "https://github.com/hernancasanova/visorPreciosFeria#readme",
   "dependencies": {
+    "axios": "^0.27.2",
     "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "express-validator": "^6.14.2",
     "puppeteer": "^17.1.1",
     "request": "^2.88.2",
     "request-promise": "^4.2.6"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.19.0",
+    "@babel/node": "^7.18.10",
+    "@babel/preset-env": "^7.19.0",
+    "nodemon": "^2.0.19"
   }
 }
