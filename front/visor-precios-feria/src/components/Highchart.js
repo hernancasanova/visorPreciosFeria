@@ -1,21 +1,24 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import Highcharts from 'highcharts';
 import Exporting from 'highcharts/modules/exporting';
+import { Spinner } from 'reactstrap';
 
 Exporting(Highcharts);
 
 //var Highcharts = require('highcharts');
  
 const Highchart = () => {
-    var prices;
+    // const prices= [];
+    //var dates=[];
+    const [prices, setPrices] = useState([])
+    const [dates, setDates] = useState([])
     const convertToNumbers = (arPrices) => {
-        //console.log("prices: ",arPrices)
         let pricesInNumber = arPrices.map(price=>{
             //console.log(parseFloat((price.replace('.', '')).replace(',','.')));
             return parseFloat((price.replace('.', '')).replace(',','.'))})
         return pricesInNumber;
     }
-    const loadGraph = p =>{
+    const loadGraph = (p,dates) =>{
         console.log("p: ",p)
         Highcharts.chart('grafico', {
             // options - see https://api.highcharts.com/highcharts
@@ -35,6 +38,7 @@ const Highchart = () => {
         
             xAxis: {
                 //type: "datetime",
+                categories: dates,
                 accessibility: {
                     rangeDescription: 'Range: 3010 to 3020'
                 }
@@ -51,14 +55,13 @@ const Highchart = () => {
                     label: {
                         connectorAllowed: false
                     },
-                    pointStart: 2010
+                    //pointStart: 2010
                 }
             },
         
             series: [{
                 name: '5PP',
                 data: p
-                //data: prices
             }],
         
             responsive: {
@@ -78,22 +81,42 @@ const Highchart = () => {
           });
     }
     useEffect(()=>{
-        fetch('http://localhost:5000/prices')
-        .then(x=>x.json())
-        .then(data=>{
-            //prices=x.prices;
-            //console.log("y",y.json())
-            prices=convertToNumbers(data.prices)
-            loadGraph(prices)
-        })
-        .catch(error=>console.log("error: ",error));
+        // fetch('http://localhost:5000/prices')
+        // .then(x=>x.json())
+        // .then(data=>{
+        //     let pricesConvertes=convertToNumbers(data.arrPreciosSubastas)
+        //     //sleep(1000);
+        //     setPrices(pricesConvertes)
+        //     loadGraph(prices, data.arrDates)
+        // })
+        // .catch(error=>console.log("error: ",error));
+
+        const fetchData = async () => {
+            const data = await fetch('http://localhost:5000/prices').then(x=>x.json()).catch(error=>console.log("error: ",error));
+            console.log("data: ",data)
+            let pricesConvertes=await convertToNumbers(data.arrPreciosSubastas)
+            setPrices([...prices, pricesConvertes])
+            setDates([...dates, data.arrDates])
+            //dates=data.dates;
+            //loadGraph(prices, data.arrDates)
+            //loadGraph(pricesConvertes, data.arrDates)
+        }
+        fetchData();
         
     },[])
+
+    useEffect(()=>{
+        if(prices.length>0 && dates.length>0){
+            loadGraph(prices[0], dates[0]) 
+        }
+        //console.log("prices: ",prices)
+    },[prices, dates])
     
-    return (
-        <div id="grafico" ></div>
-    // <div id="grafico" style={{width: "100px", height: "100px", backgroundColor: "orange"}}></div>
-    )
+    return (<>
+        <div id="grafico" >{prices.length===0?(<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Loading...</div>):""}</div>
+        {/* <div id="grafico" style={{height:"calc(100vh-52px)", margin:"0 auto", width:"100%", textAlign:"center"}} >{prices.length===0?(<div style={{paddingTop:'50%'}}><Spinner  color='primary'/>   Loading...</div>):""}</div> */}
+    {/* <div id="grafico" style={{width: "100px", height: "100px", backgroundColor: "orange"}}></div> */}
+    </>);
 }
 
 export default Highchart

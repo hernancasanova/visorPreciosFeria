@@ -18,9 +18,9 @@ const getPrices = async (callback=()=>{}) => {
         const { data } = await axios.get(url);
         let $ = cheerio.load(data);
         const ids=[];
-        // $('#sheet-menu li a').each((i,e)=>{
-        //     arrDates.push($(e).text())
-        // })
+        $('#sheet-menu li a').each((i,e)=>{
+            arrDates.push($(e).text())
+        })
         $('#sheets-viewport').children().each((i,e) => {
             ids.push($(e).attr('id'));
             $('#'+$(e).attr('id')+' td').each((j,el) => {
@@ -35,8 +35,8 @@ const getPrices = async (callback=()=>{}) => {
         //return JSON.parse(arrPreciosSubastas);
         //return arrPreciosSubastas;
         //res=arrPreciosSubastas;
-        return arrPreciosSubastas;
-        //return {arrPreciosSubastas,arrDates};
+        //return arrPreciosSubastas;
+        return {arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
         //let aa = await returnPrices(arrPreciosSubastas);
         //callback(arrPreciosSubastas);
         //return;
@@ -50,9 +50,9 @@ const getPrices = async (callback=()=>{}) => {
 
 router.get('/prices/', async (req,res)=>{
     let prices = await getPrices();
-    //let { arrPreciosSubastas, arrDates}= await getPrices();
+    let { arrPreciosSubastas, arrDates}= await getPrices();
     //console.log(prices)
-    res.json({prices})
+    res.json({arrPreciosSubastas, arrDates})
     //res.send(JSON.parse(prices));
     //res.send(JSON.parse("{prices:"+prices+"}"));
 })

@@ -10,6 +10,11 @@ function App() {
     <div>
       <Navbar/>
       <Container>
+        {/* <Row>
+          <Col className="col-12">
+            <Navbar/>
+          </Col>
+        </Row> */}
         <Row>
           <Col className="col-3">
             <Sidebar/>
