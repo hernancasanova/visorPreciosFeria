@@ -7,50 +7,54 @@ const express=require('express')
 const router=express.Router()
 const axios= require ('axios')
 
+const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQI2YwwXBUN8ZYrgxDVsblBKOtVMfH_GMmu05jPXIW7Rw9XPBXdg4iFnHPe1KeRrJ6EU_-PxrMiNxUG/pubhtml?widget=false&headers=false';
 
-const getPrices = async (callback=()=>{}) => {
+const getPrices = async (bovine) => {
     //app.listen(4000)
     let arrPreciosSubastas = [];let arrDates=[];
-    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQI2YwwXBUN8ZYrgxDVsblBKOtVMfH_GMmu05jPXIW7Rw9XPBXdg4iFnHPe1KeRrJ6EU_-PxrMiNxUG/pubhtml?widget=false&headers=false';
-    //let a= request(url,(err,res,body)=>{
-    // request('https://fegosa-wixsite-com.filesusr.com/html/c674bc_21ffe6c8206a519d13371de7c7ba93e9.html',(err,res,body)=>{
-    // //request('https://docs.google.com/spreadsheets/d/e/2PACX-1vQI2YwwXBUN8ZYrgxDVsblBKOtVMfH_GMmu05jPXIW7Rw9XPBXdg4iFnHPe1KeRrJ6EU_-PxrMiNxUG/pubhtml/sheet?headers=false&gid=1662410034',(err,res,body)=>{
-        const { data } = await axios.get(url);
-        let $ = cheerio.load(data);
-        const ids=[];
-        $('#sheet-menu li a').each((i,e)=>{
-            arrDates.push($(e).text())
-        })
-        $('#sheets-viewport').children().each((i,e) => {
-            ids.push($(e).attr('id'));
-            $('#'+$(e).attr('id')+' td').each((j,el) => {
-                if($(el).parent().text().indexOf('TERNEROS')!=-1 && $(el).attr('class')=='s9' && j%2==0){
-                    arrPreciosSubastas.push($(el).text());
-                }
-            });
+    const { data } = await axios.get(url);
+    let $ = cheerio.load(data);
+    const ids=[];
+    $('#sheet-menu li a').each((i,e)=>{
+        arrDates.push($(e).text())
+    })
+    $('#sheets-viewport').children().each((i,e) => {
+        ids.push($(e).attr('id'));
+        $('#'+$(e).attr('id')+' td').each((j,el) => {
+            if($(el).parent().text().indexOf(bovine)!=-1 && $(el).attr('class')=='s9' && j%2==0){
+                arrPreciosSubastas.push($(el).text());
+            }
         });
-        // for(let p of arrPreciosSubastas){
-            
-        // }
-        //return JSON.parse(arrPreciosSubastas);
-        //return arrPreciosSubastas;
-        //res=arrPreciosSubastas;
-        //return arrPreciosSubastas;
-        return {arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
-        //let aa = await returnPrices(arrPreciosSubastas);
-        //callback(arrPreciosSubastas);
-        //return;
-        //return callback(arrPreciosSubastas);
-    //});
-    //return a;
-    // .on('data', function(data) {
-    //     // decompressed data as it is received
-    // }); 
+    });
+    return {arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
 }
 
-router.get('/prices/', async (req,res)=>{
-    let prices = await getPrices();
-    let { arrPreciosSubastas, arrDates}= await getPrices();
+const getTypes = async () => {
+    const { data } = await axios.get(url);
+    let $ = cheerio.load(data);
+    let divModel =$('#sheets-viewport').children().first().attr('id');
+
+    //let a =$('#sheets-viewport').children().each((i,e) => {
+        // ids.push($(e).attr('id'));
+        // $('#'+$(e).attr('id')+' td').each((j,el) => {
+
+        //     // if($(el).parent().text().indexOf(bovine)!=-1 && $(el).attr('class')=='s9' && j%2==0){
+        //     //     arrPreciosSubastas.push($(el).text());
+        //     // }
+        // });
+    //});
+    //return {}
+    //console.log("a: ",a)
+}
+
+router.get('/prices/:bovine', async (req,res)=>{
+    let { bovine }= req.params;
+    // if(!bovine){
+    //     console.log("bovine antes: ",bovine)
+    //     bovine='TERNEROS'
+    // }
+    getTypes();
+    let { arrPreciosSubastas, arrDates}= await getPrices(bovine);
     //console.log(prices)
     res.json({arrPreciosSubastas, arrDates})
     //res.send(JSON.parse(prices));

@@ -1,29 +1,31 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import Highcharts from 'highcharts';
 import Exporting from 'highcharts/modules/exporting';
 import { Spinner } from 'reactstrap';
+import PricesContext from "../context/prices/PricesContext";
 
 Exporting(Highcharts);
 
 //var Highcharts = require('highcharts');
  
 const Highchart = () => {
+    const {getPrices, prices, dates, bovine} = useContext(PricesContext)
     // const prices= [];
     //var dates=[];
-    const [prices, setPrices] = useState([])
-    const [dates, setDates] = useState([])
-    const convertToNumbers = (arPrices) => {
-        let pricesInNumber = arPrices.map(price=>{
-            //console.log(parseFloat((price.replace('.', '')).replace(',','.')));
-            return parseFloat((price.replace('.', '')).replace(',','.'))})
-        return pricesInNumber;
-    }
+    // const [prices, setPrices] = useState([])
+    // const [dates, setDates] = useState([])
+    // const convertToNumbers = (arPrices) => {
+    //     let pricesInNumber = arPrices.map(price=>{
+    //         //console.log(parseFloat((price.replace('.', '')).replace(',','.')));
+    //         return parseFloat((price.replace('.', '')).replace(',','.'))})
+    //     return pricesInNumber;
+    // }
     const loadGraph = (p,dates) =>{
         console.log("p: ",p)
         Highcharts.chart('grafico', {
             // options - see https://api.highcharts.com/highcharts
             title: {
-                text: 'Precio promedio de terneros (5pp) durante el año 2022 '
+                text: 'Precio promedio de cinco primeros precios (5pp) '
             },
         
             // subtitle: {
@@ -60,7 +62,7 @@ const Highchart = () => {
             },
         
             series: [{
-                name: '5PP',
+                name: '2022',
                 data: p
             }],
         
@@ -81,6 +83,8 @@ const Highchart = () => {
           });
     }
     useEffect(()=>{
+        //console.log("bovine en highcharts: ",bovine)
+        //getPrices(bovine);
         // fetch('http://localhost:5000/prices')
         // .then(x=>x.json())
         // .then(data=>{
@@ -91,26 +95,33 @@ const Highchart = () => {
         // })
         // .catch(error=>console.log("error: ",error));
 
-        const fetchData = async () => {
-            const data = await fetch('http://localhost:5000/prices').then(x=>x.json()).catch(error=>console.log("error: ",error));
-            console.log("data: ",data)
-            let pricesConvertes=await convertToNumbers(data.arrPreciosSubastas)
-            setPrices([...prices, pricesConvertes])
-            setDates([...dates, data.arrDates])
+        // const fetchData = async () => {
+        //     const data = await fetch('http://localhost:5000/prices').then(x=>x.json()).catch(error=>console.log("error: ",error));
+        //     console.log("data: ",data)
+        //     let pricesConvertes=await convertToNumbers(data.arrPreciosSubastas)
+        //     setPrices([...prices, pricesConvertes])
+        //     setDates([...dates, data.arrDates])
             //dates=data.dates;
             //loadGraph(prices, data.arrDates)
             //loadGraph(pricesConvertes, data.arrDates)
-        }
-        fetchData();
+        //}
+        //fetchData();
+        // if(prices.length>0 && dates.length>0){
+        //     loadGraph(prices[0], dates[0]) 
+        // }
         
     },[])
 
     useEffect(()=>{
+        // console.log("se ha cambiado a: ",bovine)
+        // console.log("valor de prices: ",prices)
+        // console.log("valor de dates: ",dates)
+        //loadGraph(prices[0], dates[0])
         if(prices.length>0 && dates.length>0){
             loadGraph(prices[0], dates[0]) 
         }
         //console.log("prices: ",prices)
-    },[prices, dates])
+    },[prices])
     
     return (<>
         <div id="grafico" >{prices.length===0?(<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Loading...</div>):""}</div>

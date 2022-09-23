@@ -3,11 +3,13 @@ import './App.scss'
 import Sidebar from "./components/Sidebar";
 import { Row, Col, Container } from "reactstrap";
 import Highchart from "./components/Highchart";
+import PricesState from "./context/prices/PricesState";
+
 
 
 function App() {
   return (
-    <div>
+    <PricesState>
       <Navbar/>
       <Container>
         {/* <Row>
@@ -24,7 +26,7 @@ function App() {
           </Col>
         </Row>
       </Container>
-    </div>
+    </PricesState>
   );
 }
 
