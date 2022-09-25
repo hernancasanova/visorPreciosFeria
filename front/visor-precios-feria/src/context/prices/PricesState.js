@@ -8,7 +8,8 @@ const PricesState = (props) => {
         prices: [],
         dates: [],
         //bovineSelected: null
-        bovineSelected: 'TERNEROS'
+        bovineSelected: 'TERNEROS',
+        loading: false
     }
 
     
@@ -26,7 +27,7 @@ const PricesState = (props) => {
         const data = await fetch('http://localhost:5000/prices/'+bovine).then(x=>x.json()).catch(error=>console.log("error: ",error));
         //console.log("data: ",data);
         let pricesConvertes=await convertToNumbers(data.arrPreciosSubastas);
-        dispatch({type:'GET_DATA', payload: {pricesConvertes,dates:data.arrDates}});
+        dispatch({type:'GET_DATA', payload: {types: data.types,pricesConvertes,dates:data.arrDates}});
     }
 
     const setBovine = (bovine) => {
@@ -38,6 +39,8 @@ const PricesState = (props) => {
             prices: state.prices,
             dates: state.dates,
             bovine: state.bovineSelected,
+            types: state.types,
+            loading: state.loading,
             getPrices,
             setBovine
         }}> 

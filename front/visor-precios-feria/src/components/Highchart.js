@@ -9,7 +9,7 @@ Exporting(Highcharts);
 //var Highcharts = require('highcharts');
  
 const Highchart = () => {
-    const {getPrices, prices, dates, bovine} = useContext(PricesContext)
+    const {getPrices, prices, dates, bovine, loading} = useContext(PricesContext)
     // const prices= [];
     //var dates=[];
     // const [prices, setPrices] = useState([])
@@ -82,7 +82,7 @@ const Highchart = () => {
             }
           });
     }
-    useEffect(()=>{
+    //useEffect(()=>{
         //console.log("bovine en highcharts: ",bovine)
         //getPrices(bovine);
         // fetch('http://localhost:5000/prices')
@@ -110,7 +110,7 @@ const Highchart = () => {
         //     loadGraph(prices[0], dates[0]) 
         // }
         
-    },[])
+    //},[])
 
     useEffect(()=>{
         // console.log("se ha cambiado a: ",bovine)
@@ -124,7 +124,8 @@ const Highchart = () => {
     },[prices])
     
     return (<>
-        <div id="grafico" >{prices.length===0?(<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Loading...</div>):""}</div>
+        {/* <div id="grafico" >{bovine===null?"":(prices.length===0?<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Loading...</div>:"")}</div> */}
+        <div id="grafico" >{prices.length===0 || loading ?<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Loading...</div>:""}</div>
         {/* <div id="grafico" style={{height:"calc(100vh-52px)", margin:"0 auto", width:"100%", textAlign:"center"}} >{prices.length===0?(<div style={{paddingTop:'50%'}}><Spinner  color='primary'/>   Loading...</div>):""}</div> */}
     {/* <div id="grafico" style={{width: "100px", height: "100px", backgroundColor: "orange"}}></div> */}
     </>);

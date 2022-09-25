@@ -15,6 +15,8 @@ const getPrices = async (bovine) => {
     const { data } = await axios.get(url);
     let $ = cheerio.load(data);
     const ids=[];
+    getTypes();
+    let types = [];
     $('#sheet-menu li a').each((i,e)=>{
         arrDates.push($(e).text())
     })
@@ -23,17 +25,24 @@ const getPrices = async (bovine) => {
         $('#'+$(e).attr('id')+' td').each((j,el) => {
             if($(el).parent().text().indexOf(bovine)!=-1 && $(el).attr('class')=='s9' && j%2==0){
                 arrPreciosSubastas.push($(el).text());
+            }else if($(el).attr('class')=='s7'){
+                types.push($(el).text())
             }
         });
     });
-    return {arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
+    return {types, arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
 }
 
 const getTypes = async () => {
     const { data } = await axios.get(url);
     let $ = cheerio.load(data);
+    var types = [];
     let divModel =$('#sheets-viewport').children().first().attr('id');
-
+    $("#"+divModel+" td.s7").each((j,el) => {
+        console.log($(el).text())
+        types.push($(el).text())
+    });
+    return {types}
     //let a =$('#sheets-viewport').children().each((i,e) => {
         // ids.push($(e).attr('id'));
         // $('#'+$(e).attr('id')+' td').each((j,el) => {
@@ -53,10 +62,10 @@ router.get('/prices/:bovine', async (req,res)=>{
     //     console.log("bovine antes: ",bovine)
     //     bovine='TERNEROS'
     // }
-    getTypes();
+    let {types}= await getTypes();
     let { arrPreciosSubastas, arrDates}= await getPrices(bovine);
     //console.log(prices)
-    res.json({arrPreciosSubastas, arrDates})
+    res.json({types, arrPreciosSubastas, arrDates})
     //res.send(JSON.parse(prices));
     //res.send(JSON.parse("{prices:"+prices+"}"));
 })

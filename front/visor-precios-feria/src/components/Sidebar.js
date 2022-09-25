@@ -3,18 +3,21 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Label, FormGroup,
 import PricesContext from "../context/prices/PricesContext";
 
 const Sidebar = ({ direction, ...args }) => {
-    const {setBovine, bovine, getPrices} = useContext(PricesContext)
+    const {setBovine, bovine, getPrices, types} = useContext(PricesContext)
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const toggle = () => setDropdownOpen((prevState) => !prevState);
+    //console.log("types: ",types)
     const loadPrices = async (val) => {
         //console.log("cargando los precios de ",val.toUpperCase())
-        setBovine(val.toUpperCase());
+        setBovine(val.toUpperCase(),);
         //console.log("bovine: ",bovine)
     }
-    useEffect(()=>{
-        getPrices(bovine);
-    },[])
+    // useEffect(()=>{
+    //     getPrices(bovine);
+    // },[])
     useEffect(() => {
+        console.log("por aqui no", bovine)
         getPrices(bovine);
     }, [bovine])
     
@@ -46,9 +49,16 @@ const Sidebar = ({ direction, ...args }) => {
                     onChange={(e)=>loadPrices(e.target.value)}
                     >
                         <option val="">
-                            Terneros
+                            Seleccione
                         </option>
-                        <option val="">
+                        {types?types.map(type => {
+                            return (
+                            <option key={type}>
+                                {type}
+                            </option>
+                            );
+                        }):<></>}  
+                        {/* <option val="">
                             Terneras
                         </option>
                         <option val="">
@@ -59,7 +69,7 @@ const Sidebar = ({ direction, ...args }) => {
                         </option>
                         <option val="">
                             Bueyes
-                        </option>
+                        </option> */}
                     </Input>
                 </FormGroup>
             </div>
