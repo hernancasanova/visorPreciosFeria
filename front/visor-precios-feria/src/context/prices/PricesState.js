@@ -7,8 +7,10 @@ const PricesState = (props) => {
     const initialState = {
         prices: [],
         dates: [],
+        types:[],
         //bovineSelected: null
-        bovineSelected: 'TERNEROS',
+        bovineSelected: "hola",
+        yearSelected: "",
         loading: false
     }
 
@@ -22,16 +24,25 @@ const PricesState = (props) => {
         return pricesInNumber;
     }
 
-    const getPrices = async (bovine) => {
+    const getPrices = async (bovine, year=2022) => {
         //console.log("bovine: ",bovine)
-        const data = await fetch('http://localhost:5000/prices/'+bovine).then(x=>x.json()).catch(error=>console.log("error: ",error));
+        const data = await fetch('http://localhost:5000/prices/'+bovine+"/"+year).then(x=>x.json()).catch(error=>console.log("error: ",error));
         //console.log("data: ",data);
         let pricesConvertes=await convertToNumbers(data.arrPreciosSubastas);
-        dispatch({type:'GET_DATA', payload: {types: data.types,pricesConvertes,dates:data.arrDates}});
+        dispatch({type:'SET_DATA', payload: {pricesConvertes,dates:data.arrDates}});
     }
 
-    const setBovine = (bovine) => {
-        dispatch({type:'SET_BOVINE', payload: {bovine}});
+    const setLoading = () =>{
+        dispatch({type:'SET_LOADING', payload: {}});
+    }
+
+    const getTypes = async () => {
+        const data = await fetch('http://localhost:5000/types/').then(x=>x.json()).catch(error=>console.log("error: ",error));
+        dispatch({type:'SET_TYPES', payload: {types: data.types}});
+    }
+
+    const setParameters= (bovine, year) => {//agregar más parametros
+        dispatch({type:'SET_PARAMETERS', payload: {bovine,year}});//agregar periodo
     }
 
     return(
@@ -41,8 +52,11 @@ const PricesState = (props) => {
             bovine: state.bovineSelected,
             types: state.types,
             loading: state.loading,
+            yearSelected: state.yearSelected,
             getPrices,
-            setBovine
+            setLoading,
+            setParameters,
+            getTypes
         }}> 
             {props.children}
         </PricesContext.Provider>

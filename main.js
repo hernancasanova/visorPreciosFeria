@@ -3,8 +3,12 @@ const app = express()
 const port = 5000
 const cors = require('cors')
 const routes = require('./src/routes/routes')
+const mongoose = require('mongoose')
 
 
+mongoose.connect('mongodb://localhost/prices')
+  .then(db => console.log('db connected'))
+  .catch(err => console.log(err));
 app.use(cors())
 app.use(express.json())
 app.use('/',routes)

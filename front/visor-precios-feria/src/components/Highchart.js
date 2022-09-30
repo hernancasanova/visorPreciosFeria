@@ -9,7 +9,7 @@ Exporting(Highcharts);
 //var Highcharts = require('highcharts');
  
 const Highchart = () => {
-    const {getPrices, prices, dates, bovine, loading} = useContext(PricesContext)
+    const {prices, dates, bovine, loading, yearSelected} = useContext(PricesContext)
     // const prices= [];
     //var dates=[];
     // const [prices, setPrices] = useState([])
@@ -21,11 +21,11 @@ const Highchart = () => {
     //     return pricesInNumber;
     // }
     const loadGraph = (p,dates) =>{
-        console.log("p: ",p)
+        //console.log("p: ",p)
         Highcharts.chart('grafico', {
             // options - see https://api.highcharts.com/highcharts
             title: {
-                text: 'Precio promedio de cinco primeros precios (5pp) '
+                text: 'Precio promedio de cinco primeros precios (5pp) de '+bovine.toLowerCase()+" del año "+yearSelected   
             },
         
             // subtitle: {
@@ -62,7 +62,7 @@ const Highchart = () => {
             },
         
             series: [{
-                name: '2022',
+                name: yearSelected,
                 data: p
             }],
         
@@ -123,12 +123,14 @@ const Highchart = () => {
         //console.log("prices: ",prices)
     },[prices])
     
-    return (<>
-        {/* <div id="grafico" >{bovine===null?"":(prices.length===0?<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Loading...</div>:"")}</div> */}
-        <div id="grafico" >{prices.length===0 || loading ?<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Loading...</div>:""}</div>
-        {/* <div id="grafico" style={{height:"calc(100vh-52px)", margin:"0 auto", width:"100%", textAlign:"center"}} >{prices.length===0?(<div style={{paddingTop:'50%'}}><Spinner  color='primary'/>   Loading...</div>):""}</div> */}
-    {/* <div id="grafico" style={{width: "100px", height: "100px", backgroundColor: "orange"}}></div> */}
-    </>);
+    console.log("loading en gráfico: ",loading)
+    return (
+        <div id="grafico" >
+            {loading ?<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Cargando información...</div>:<div style={{paddingTop:"25%"}}>
+                Seleccione un tipo de vacuno y un periodo. <br/> Luego presione el botón "Visualizar datos" para desplegar resultados</div>}
+            {/* (!prices?"":<div style={{paddingTop:"30%"}}>Presiona el botón "Visualizar datos" para cargar información {loading?"true":"false"}</div>)} */}
+        </div>
+        );
 }
 
 export default Highchart
