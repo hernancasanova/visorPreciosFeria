@@ -25,11 +25,18 @@ const getPrices = async (bovine, year=2022) => {
         })
         $('#sheets-viewport').children().each((i,e) => {
             ids.push($(e).attr('id'));
-            $('#'+$(e).attr('id')+' td').each((j,el) => {
-                if($(el).parent().text().indexOf(bovine)!=-1 && $(el).attr('class')=='s9' && j%2==0){
-                    arrPreciosSubastas.push($(el).text());
-                }else if($(el).attr('class')=='s7'){
-                    types.push($(el).text())
+            // $('#'+$(e).attr('id')+' td').each((j,el) => {
+            //     if($(el).parent().text().indexOf(bovine)!=-1 && $(el).attr('class')=='s9' && j%2==0){
+            //         arrPreciosSubastas.push($(el).text());
+            //     }
+            // });
+            $('#'+$(e).attr('id')+' tr').each((j,el) => {
+                // if($(el).parent().text().indexOf(bovine)!=-1 && $(el).attr('class')=='s9' && j%2==0){
+                //     arrPreciosSubastas.push($(el).text());
+                //console.log($(el).text())
+                // }
+                if($(el).children().first().text()==bovine){
+                    arrPreciosSubastas.push($(el).children('.s9').first().text())
                 }
             });
         });
@@ -37,15 +44,13 @@ const getPrices = async (bovine, year=2022) => {
     }else{
         //const MyModel = mongoose.model('2021');
         const prices = await PriceSchema.find({type: bovine});
-        //console.log(prices)
         prices.forEach(p=>{
             arrPreciosSubastas.push(p.price);
             arrDates.push(p.date);
-            types.push(p.type);
         })
         //return {types, arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()}
     }
-    return {types, arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
+    return {arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
 }
 
 const getPricesType = async (bovine, year) => {
@@ -62,20 +67,16 @@ const insertData = () => {
         var dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
         var documents=[]
         var precio;
-        dataExcel.forEach((e,i) => {
-            if(i>4){
+        dataExcel.forEach((e,m) => {
+            if(m>4){
                 precio = new PriceSchema(
-                    {type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']}
+                    //{type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']}
+                    {type: m+3,date: sheet, price: e['__EMPTY_7']}
                 )
                 precio.save()  
-                //console.log(e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],i)
-                //console.log(e['__EMPTY_7'],i)
-                //documents.push({type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']})
             }  
         });
     }
-    //console.log(documents)
-    //console.log(dataExcel)
 } 
 
 const getTypes = async () => {
@@ -83,27 +84,19 @@ const getTypes = async () => {
     let $ = cheerio.load(data);
     var types = [];
     let divModel =$('#sheets-viewport').children().first().attr('id');
+    var names=[], keys=[];
+    $("#"+divModel+" th div").each((i,el) => {
+        if(i>6) keys.push($(el).text())
+    });
     $("#"+divModel+" td.s7").each((j,el) => {
-        //console.log($(el).text())
-        types.push({name: $(el).text()})
+        types.push({name: $(el).text(), key: keys[j]})
     });
     return {types}
-    //let a =$('#sheets-viewport').children().each((i,e) => {
-        // ids.push($(e).attr('id'));
-        // $('#'+$(e).attr('id')+' td').each((j,el) => {
-
-        //     // if($(el).parent().text().indexOf(bovine)!=-1 && $(el).attr('class')=='s9' && j%2==0){
-        //     //     arrPreciosSubastas.push($(el).text());
-        //     // }
-        // });
-    //});
-    //return {}
-    //console.log("a: ",a)
 }
 
 router.get('/types', async (req, res) =>{
     let {types}= await getTypes();
-    console.log(types)
+    //console.log(types)
     res.json({types})
 });
 

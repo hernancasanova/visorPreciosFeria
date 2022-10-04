@@ -27,7 +27,7 @@ const PricesState = (props) => {
     const getPrices = async (bovine, year=2022) => {
         //console.log("bovine: ",bovine)
         const data = await fetch('http://localhost:5000/prices/'+bovine+"/"+year).then(x=>x.json()).catch(error=>console.log("error: ",error));
-        //console.log("data: ",data);
+
         let pricesConvertes=await convertToNumbers(data.arrPreciosSubastas);
         dispatch({type:'SET_DATA', payload: {pricesConvertes,dates:data.arrDates}});
     }
@@ -37,8 +37,8 @@ const PricesState = (props) => {
     }
 
     const getTypes = async () => {
-        const data = await fetch('http://localhost:5000/types/').then(x=>x.json()).catch(error=>console.log("error: ",error));
-        dispatch({type:'SET_TYPES', payload: {types: data.types}});
+        const {types} = await fetch('http://localhost:5000/types/').then(x=>x.json()).catch(error=>console.log("error: ",error));
+        dispatch({type:'SET_TYPES', payload: {types}});
     }
 
     const setParameters= (bovine, year) => {//agregar más parametros

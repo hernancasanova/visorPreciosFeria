@@ -9,7 +9,7 @@ Exporting(Highcharts);
 //var Highcharts = require('highcharts');
  
 const Highchart = () => {
-    const {prices, dates, bovine, loading, yearSelected} = useContext(PricesContext)
+    const {prices, dates, bovine, loading, yearSelected, types} = useContext(PricesContext)
     // const prices= [];
     //var dates=[];
     // const [prices, setPrices] = useState([])
@@ -20,12 +20,13 @@ const Highchart = () => {
     //         return parseFloat((price.replace('.', '')).replace(',','.'))})
     //     return pricesInNumber;
     // }
+    //var bovineSelected = types.length>0?document.getElementById('selectBovine').options[bovineSelected.selectedIndex].text: "";
     const loadGraph = (p,dates) =>{
         //console.log("p: ",p)
         Highcharts.chart('grafico', {
             // options - see https://api.highcharts.com/highcharts
             title: {
-                text: 'Precio promedio de cinco primeros precios (5pp) de '+bovine.toLowerCase()+" del año "+yearSelected   
+                text: 'Precio promedio de cinco primeros precios (5pp) del año '+yearSelected   
             },
         
             // subtitle: {

@@ -85,7 +85,7 @@ const Sidebar = ({ direction, ...args }) => {
                         Seleccione el tipo de vacuno a consultar:
                         </Label>
                         <Input
-                        id="exampleSelect"
+                        id="selectBovine"
                         name="select"
                         type="select"
                         onChange={(e)=>setParameters(e.target.value.toUpperCase(),yearSelected)}
@@ -95,8 +95,8 @@ const Sidebar = ({ direction, ...args }) => {
                             </option>
                             {types?types.map(type => {
                                 return (
-                                <option key={type}>
-                                    {type}
+                                <option key={type.key} value={type.key}>
+                                    {type.name}
                                 </option>
                                 );
                             }):<></>}  
