@@ -126,9 +126,9 @@ const Sidebar = ({ direction, ...args }) => {
                             <option val="2021">
                                 2021
                             </option>
-                            {/* <option val="2020">
+                            <option val="2020">
                                 2020
-                            </option> */}
+                            </option>
                         </Input>
                     </FormGroup>
                 </Row>

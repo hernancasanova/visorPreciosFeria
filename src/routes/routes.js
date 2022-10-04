@@ -7,6 +7,7 @@ import res from 'express/lib/response';
 import app from '../../main';//?
 const express=require('express')
 const PriceSchema = require('../models/prices') 
+const Prices2020Schema = require('../models/2020') 
 const router=express.Router()
 const axios= require ('axios')
 const XLSX = require("xlsx")
@@ -42,8 +43,13 @@ const getPrices = async (bovine, year=2022) => {
         });
         //return {types, arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
     }else{
+        var prices;
         //const MyModel = mongoose.model('2021');
-        const prices = await PriceSchema.find({type: bovine});
+        if(year == 2021){
+            prices = await PriceSchema.find({type: bovine});
+        }else if(year == 2020){
+            prices = await Prices2020Schema.find({type: bovine});
+        }
         prices.forEach(p=>{
             arrPreciosSubastas.push(p.price);
             arrDates.push(p.date);
@@ -59,8 +65,13 @@ const getPricesType = async (bovine, year) => {
 }
 
 
-const insertData = () => {
-    var workbook = XLSX.readFile("./src/routes/PP2021.xlsx");
+const insertData = (year) => {
+    var workbook;
+    if(year==2021){
+        workbook = XLSX.readFile("./src/routes/PP2021.xlsx");
+    }else{
+        workbook = XLSX.readFile("./src/routes/PP2020.xlsx");
+    }
     var workbookSheets = workbook.SheetNames;
     for(var i = 0; i<workbookSheets.length; i++){
         var sheet = workbookSheets[i];
@@ -69,10 +80,17 @@ const insertData = () => {
         var precio;
         dataExcel.forEach((e,m) => {
             if(m>4){
-                precio = new PriceSchema(
-                    //{type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']}
-                    {type: m+3,date: sheet, price: e['__EMPTY_7']}
-                )
+                if(year==2021){
+                    precio = new PriceSchema(
+                        //{type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']}
+                        {type: m+3,date: sheet, price: e['__EMPTY_7']}
+                    )
+                }else{
+                    precio = new Prices2020Schema(
+                        //{type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']}
+                        {type: m+3,date: sheet, price: e['__EMPTY_7']}
+                    )
+                }
                 precio.save()  
             }  
         });
@@ -100,9 +118,10 @@ router.get('/types', async (req, res) =>{
     res.json({types})
 });
 
-router.get('/importdata', async (req, res) =>{
+router.get('/importdata/:year', async (req, res) =>{
+    const {year} = req.params
     try{
-        insertData()
+        insertData(year)
         res.send("imported")
     }catch(e){
         res.send("not imported: "+e)
