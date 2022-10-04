@@ -1,0 +1,5 @@
+export const GET_DATA = 'GET_DATA'
+export const SET_TYPES = 'SET_TYPES'
+export const SET_DATA = 'SET_DATA'
+export const SET_PARAMETERS = 'SET_PARAMETERS'
+export const SET_LOADING = 'SET_LOADING'

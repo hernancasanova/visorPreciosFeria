@@ -1,0 +1,33 @@
+$light: #ffffff;
+$gray: #c4ccde;
+
+.mynav{
+  background-color: $light;
+  padding: 1rem 2rem;
+  text-align:center;
+  /*border-bottom: 1px solid $gray;*/
+  margin:0 auto;
+  width: 100%;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+
+}
+
+.sidebar {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  width: 14rem;
+  height: calc(100vh - 52px);
+  /*border-right: 1px solid $gray;*/
+  margin-right: 20px;
+  margin-top: 10%;
+}
+
+.sidebar select{
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#grafico{
+  height:calc(100vh - 52px);
+  margin:0 auto; 
+  width:100%;
+  text-align:center
+}
