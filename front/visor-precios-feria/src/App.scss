@@ -34,6 +34,14 @@ $gray: #c4ccde;
   font-family: 'Courier New', Courier, monospace;
 }
 
+#g{
+  height:calc(100vh - 52px);
+  vertical-align: center;
+}
+#g p{
+  padding-top: 30%;
+}
+
 #grafico{
   height:calc(100vh - 52px);
   margin:0 auto; 

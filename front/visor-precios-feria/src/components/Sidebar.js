@@ -39,52 +39,8 @@ const Sidebar = ({ direction, ...args }) => {
     return (
         <div className="sidebar">
             {/* Seleccione el tipo de vacuno a consultar: */}
-            {types.length===0?<Spinner style={{margin: "100% 0% 0% 40%"}}/>:<div className="d-flex p-1">
-                {/* <Dropdown isOpen={dropdownOpen} onChange={()=>{alert("cmabio")}} toggle={toggle} direction={direction}>
-                    <DropdownToggle caret>Seleccione</DropdownToggle>
-                    <DropdownMenu {...args}>
-                    {/*<DropdownItem header>Seleccione</DropdownItem>
-                     <DropdownItem>Some Action</DropdownItem>
-                    <DropdownItem text>Dropdown Item Text</DropdownItem>
-                    <DropdownItem disabled>Action (disabled)</DropdownItem>
-                    <DropdownItem divider />
-                    <DropdownItem>Terneros</DropdownItem>
-                    <DropdownItem>Terneras</DropdownItem>
-                    <DropdownItem>Vacas</DropdownItem> 
-                    </DropdownMenu>
-                </Dropdown> */}
+            {types.length===0?<Spinner style={{margin: "30% 0% 0% 10%"}}/>:<div className="d-flex p-1">
                 <Container>
-                {/* <Formik
-       initialValues={{ email: '', password: '' }}
-       validate={values => {
-         const errors = {};
-         if (!values.email) {
-           errors.email = 'Required';
-         } else if (
-           !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-         ) {
-           errors.email = 'Invalid email address';
-         }
-         return errors;
-       }}
-       onSubmit={(values, { setSubmitting }) => {
-         setTimeout(() => {
-           alert(JSON.stringify(values, null, 2));
-           setSubmitting(false);
-         }, 400);
-       }}
-     >
-       {({
-         values,
-         errors,
-         touched,
-         handleChange,
-         handleBlur,
-         handleSubmit,
-         isSubmitting,
-         
-       }) => (
-         <form onSubmit={handleSubmit}> */}
                 <Row>
                     <FormGroup>
                         <Label for="selectBovine">
@@ -154,61 +110,6 @@ const Sidebar = ({ direction, ...args }) => {
                     </FormGroup>
                 </Row>
                 <br/><br/><br/>
-                {/*<Row>
-                    <FormGroup>
-                        <Label for="loadPeriod">
-                        Seleccione periodo:
-                        </Label>
-                        <Input
-                        id="loadPeriod"
-                        name="loadPeriod"
-                        type="select"
-                        value={yearSelected}
-                        onChange={(e)=>setParameters(bovine,e.target.value)}
-                        >
-                            <option value="">
-                                Seleccione
-                            </option>
-                            <option value="2021">
-                                2021
-                            </option>
-                            <option value="2020">
-                                2020
-                            </option>
-                        </Input>
-                    </FormGroup>
-                </Row>
-                <Row>
-                    <FormGroup>
-                        <Label >
-                        Cargar registros de años anteriores:
-                        </Label>
-                        <Input
-                        id="excel"
-                        name="excel"
-                        type="file"
-                        //onChange={(e)=>alert("Se ha cargado un archivo")}
-                        >
-                        </Input>
-                    </FormGroup>
-                </Row>
-                <Row>
-                    <FormGroup>
-                        <Button
-                        id="loadRegisters"
-                        name="loadRegisters"
-                        //disabled={yearSelected==undefined  || bovine==undefined}
-                        //type="submit"
-                        onClick={()=>{load()}}
-                        //onChange={(e)=>loadPrices(e.target.value)}
-                        >
-                            Cargar registros
-                        </Button>
-                    </FormGroup>
-                </Row>*/}
-                {/* </form>
-       )}
-     </Formik> */}
                 </Container>
             </div>}
         </div>);

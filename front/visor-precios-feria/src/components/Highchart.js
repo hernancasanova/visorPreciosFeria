@@ -10,20 +10,10 @@ Exporting(Highcharts);
  
 const Highchart = () => {
     const {prices, dates, bovine, loading, yearSelected, types} = useContext(PricesContext)
-    // const prices= [];
-    //var dates=[];
-    // const [prices, setPrices] = useState([])
-    // const [dates, setDates] = useState([])
-    // const convertToNumbers = (arPrices) => {
-    //     let pricesInNumber = arPrices.map(price=>{
-    //         //console.log(parseFloat((price.replace('.', '')).replace(',','.')));
-    //         return parseFloat((price.replace('.', '')).replace(',','.'))})
-    //     return pricesInNumber;
-    // }
     //var bovineSelected = types.length>0?document.getElementById('selectBovine').options[bovineSelected.selectedIndex].text: "";
     const loadGraph = (p,dates) =>{
         //console.log("p: ",p)
-        Highcharts.chart('grafico', {
+        Highcharts.chart('g', {
             // options - see https://api.highcharts.com/highcharts
             title: {
                 text: '<b>Precio promedio de cinco primeros precios (5pp) del año '+yearSelected+'</b>'   
@@ -63,6 +53,11 @@ const Highchart = () => {
                         connectorAllowed: false
                     },
                     //pointStart: 2010
+                }
+            },
+            tooltip: {
+                formatter: function () {
+                    return "<b>"+this.x+"<br>$ "+this.y+"</b>"
                 }
             },
         
@@ -131,8 +126,8 @@ const Highchart = () => {
     //console.log("loading en gráfico: ",loading)
     return (
         <div id="grafico" >
-            {loading ?<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Cargando información...</div>:<div style={{paddingTop:"25%"}}>
-                Seleccione un tipo de vacuno y un periodo. <br/> Luego presione el botón "Visualizar datos" para desplegar resultados</div>}
+            {loading?<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Cargando información...</div>:<div id="g" >
+                {!loading && prices.length==0?<p>Seleccione un tipo de vacuno y un periodo.<br/> Luego presione el botón "Visualizar datos" para desplegar resultados</p>:""}</div>}
             {/* (!prices?"":<div style={{paddingTop:"30%"}}>Presiona el botón "Visualizar datos" para cargar información {loading?"true":"false"}</div>)} */}
         </div>
         );
