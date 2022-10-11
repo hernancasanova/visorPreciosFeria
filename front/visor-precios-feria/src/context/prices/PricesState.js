@@ -9,7 +9,7 @@ const PricesState = (props) => {
         dates: [],
         types:[],
         //bovineSelected: null
-        bovineSelected: "hola",
+        bovineSelected: "",
         yearSelected: "",
         loading: false
     }
@@ -45,6 +45,22 @@ const PricesState = (props) => {
         dispatch({type:'SET_PARAMETERS', payload: {bovine,year}});//agregar periodo
     }
 
+    const loadOldYears = async() => {
+        const {resp} = await fetch('http://localhost:5000/importdata').then(x=>x.json()).catch(error=>console.log("error: ",error));
+        return resp;
+    }
+
+    const loadRegisters = async (file, year) => {//en desuso
+        console.log("tear: ", year)
+        var data = new FormData()
+        data.append('excel',file)
+        let msj = await fetch('http://localhost:5000/importdata/'+year, {
+            method: 'POST',
+            body: data
+          }).then(x=>x).catch(error=>console.log("error: ",error));
+        console.log("msj: ",msj)
+    }
+
     return(
         <PricesContext.Provider value={{
             prices: state.prices,
@@ -56,7 +72,9 @@ const PricesState = (props) => {
             getPrices,
             setLoading,
             setParameters,
-            getTypes
+            getTypes,
+            loadOldYears,
+            loadRegisters
         }}> 
             {props.children}
         </PricesContext.Provider>

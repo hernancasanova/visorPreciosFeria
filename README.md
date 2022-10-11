@@ -1,6 +1,6 @@
 # visorPreciosFeria
-Excelente aplicación web que permite entregar de manera visualmente fácil la variación de precios de ganado de la feria FEGOSA a lo largo de los meses.
-Conozca los precios actuales de TODOS los animales subastados. Además, puede cargar información de años anteriores para su comparación.
+Excelente aplicación web que permite entregar de manera visualmente fácil la variación de precios de ganado de la feria FEGOSA (Paillaco) a lo largo de los meses.
+Conozca los precios actuales de TODOS los animales subastados. Además, puede conocer información de años anteriores lo que le permitirá tomar mejores decisiones para maximizar sus ganancias.
 
 # Software requerido
 

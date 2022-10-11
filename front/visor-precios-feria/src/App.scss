@@ -9,16 +9,25 @@ $gray: #c4ccde;
   margin:0 auto;
   width: 100%;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  opacity: 0.8;
 
+}
+#btnVisualizar{
+  margin-left:auto;
 }
 
 .sidebar {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  width: 14rem;
-  height: calc(100vh - 52px);
+  /*width: 14rem;*/
+  /*height: calc(100vh - 52px);*/
+  height: 35vh;
   /*border-right: 1px solid $gray;*/
-  margin-right: 20px;
+  /*margin-right: 20px;*/
   margin-top: 10%;
+  background-color: white;
+  border-radius:0.5rem;
+  opacity: 0.9;
+  text-align: center;
 }
 
 .sidebar select{
@@ -29,5 +38,17 @@ $gray: #c4ccde;
   height:calc(100vh - 52px);
   margin:0 auto; 
   width:100%;
-  text-align:center
+  text-align:center;
+  opacity: 0.9;
+  background-color: white;
+  font-size: 20px;
+  color: black;
+  margin-top: 3%;
+  vertical-align: center;
+  border-radius: 0.5rem;
+}
+body{
+  background: url("../public/background.jpg") no-repeat center center fixed;
+  background-size: cover;
+  /*opacity: 0.5;*/
 }

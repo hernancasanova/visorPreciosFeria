@@ -5,7 +5,7 @@ import {Row, Container, Button} from 'reactstrap'
 import { Formik } from 'formik';
 
 const Sidebar = ({ direction, ...args }) => {
-    const {setParameters, bovine, getTypes, types, yearSelected, prices, getPrices, setLoading, loading} = useContext(PricesContext)
+    const {setParameters, loadOldYears, bovine, getTypes, types, yearSelected, prices, getPrices, setLoading, loading, loadRegisters} = useContext(PricesContext)
     const [dropdownOpen, setDropdownOpen] = useState(false);
     //const [loading, setLoading] = useState(false);
     const toggle = () => setDropdownOpen((prevState) => !prevState);
@@ -15,21 +15,27 @@ const Sidebar = ({ direction, ...args }) => {
         setBovine(val.toUpperCase());
         //console.log("bovine: ",bovine)
     }*/
-    //const [period,setPeriod] = useState(1992)
+    const initializer = async () => {
+        const loadDone = await loadOldYears()
+        if(loadDone=='200'){
+            getTypes();
+        }
+    }
     useEffect(()=>{
-        getTypes();
+        initializer();
     },[])
 
-    //CAMBIAR ESTO
-    // useEffect(() => 
-    //     console.log("por aqui no", bovine)
-    //     getPrices(bovine);
-    // }, [bovine])
     if(loading){
         getPrices(bovine,yearSelected);
     }
-    console.log("bovine: ",bovine)
-    console.log("yearSelected: ",yearSelected)
+    const load = () => {
+        //var input = document.querySelector('input[type="file"]')
+        var input = document.getElementById("excel")
+        var year = document.getElementById('loadPeriod').value;
+        loadRegisters(input.files[0], year);
+    }
+    // console.log("bovine: ",bovine)
+    // console.log("yearSelected: ",yearSelected)
     return (
         <div className="sidebar">
             {/* Seleccione el tipo de vacuno a consultar: */}
@@ -81,16 +87,17 @@ const Sidebar = ({ direction, ...args }) => {
          <form onSubmit={handleSubmit}> */}
                 <Row>
                     <FormGroup>
-                        <Label for="exampleSelect">
-                        Seleccione el tipo de vacuno a consultar:
+                        <Label for="selectBovine">
+                        Seleccione tipo de vacuno:
                         </Label>
                         <Input
                         id="selectBovine"
-                        name="select"
+                        name="selectBovine"
                         type="select"
+                        value={bovine}
                         onChange={(e)=>setParameters(e.target.value.toUpperCase(),yearSelected)}
                         >
-                            <option val="">
+                            <option value="">
                                 Seleccione
                             </option>
                             {types?types.map(type => {
@@ -105,7 +112,7 @@ const Sidebar = ({ direction, ...args }) => {
                 </Row>
                 <Row>
                     <FormGroup>
-                        <Label for="exampleSelect">
+                        <Label for="period">
                         Seleccione periodo:
                         </Label>
                         <Input
@@ -117,16 +124,16 @@ const Sidebar = ({ direction, ...args }) => {
                         //value={["2020","2021"]}
                         onChange={(e)=>setParameters(bovine,e.target.value)}
                         >
-                            <option val="">
+                            <option value="">
                                 Seleccione
                             </option>
-                            <option val="2050">
+                            <option value="2022">
                                 2022
                             </option>
-                            <option val="2021">
+                            <option value="2021">
                                 2021
                             </option>
-                            <option val="2020">
+                            <option value="2020">
                                 2020
                             </option>
                         </Input>
@@ -135,9 +142,9 @@ const Sidebar = ({ direction, ...args }) => {
                 <Row>
                     <FormGroup>
                         <Button
-                        id="excel"
-                        name="excel"
-                        disabled={!yearSelected  || !bovine}
+                        id="btnVisualizar"
+                        name="btnVisualizar"
+                        disabled={yearSelected=='' || bovine=='' }
                         //type="submit"
                         onClick={()=>{setLoading()}}
                         //onChange={(e)=>loadPrices(e.target.value)}
@@ -146,20 +153,59 @@ const Sidebar = ({ direction, ...args }) => {
                         </Button>
                     </FormGroup>
                 </Row>
-                {/* <Row>
+                <br/><br/><br/>
+                {/*<Row>
                     <FormGroup>
-                        <Label for="exampleSelect">
-                        Seleccione un archivo para cargar registros de años anteriores:
+                        <Label for="loadPeriod">
+                        Seleccione periodo:
+                        </Label>
+                        <Input
+                        id="loadPeriod"
+                        name="loadPeriod"
+                        type="select"
+                        value={yearSelected}
+                        onChange={(e)=>setParameters(bovine,e.target.value)}
+                        >
+                            <option value="">
+                                Seleccione
+                            </option>
+                            <option value="2021">
+                                2021
+                            </option>
+                            <option value="2020">
+                                2020
+                            </option>
+                        </Input>
+                    </FormGroup>
+                </Row>
+                <Row>
+                    <FormGroup>
+                        <Label >
+                        Cargar registros de años anteriores:
                         </Label>
                         <Input
                         id="excel"
                         name="excel"
                         type="file"
-                        onChange={(e)=>alert("Se ha cargado un archivo")}
+                        //onChange={(e)=>alert("Se ha cargado un archivo")}
                         >
                         </Input>
                     </FormGroup>
-                </Row> */}
+                </Row>
+                <Row>
+                    <FormGroup>
+                        <Button
+                        id="loadRegisters"
+                        name="loadRegisters"
+                        //disabled={yearSelected==undefined  || bovine==undefined}
+                        //type="submit"
+                        onClick={()=>{load()}}
+                        //onChange={(e)=>loadPrices(e.target.value)}
+                        >
+                            Cargar registros
+                        </Button>
+                    </FormGroup>
+                </Row>*/}
                 {/* </form>
        )}
      </Formik> */}

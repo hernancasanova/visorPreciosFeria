@@ -26,13 +26,17 @@ const Highchart = () => {
         Highcharts.chart('grafico', {
             // options - see https://api.highcharts.com/highcharts
             title: {
-                text: 'Precio promedio de cinco primeros precios (5pp) del año '+yearSelected   
+                text: '<b>Precio promedio de cinco primeros precios (5pp) del año '+yearSelected+'</b>'   
             },
         
             // subtitle: {
             //     text: 'Source: <a href="https://irecusa.org/programs/solar-jobs-census/" target="_blank">IREC</a>'
             // },
-        
+            
+            formatter: function(){
+                console.log(this)
+                return this.point.name
+            },
             yAxis: {
                 title: {
                     text: '$'
@@ -124,7 +128,7 @@ const Highchart = () => {
         //console.log("prices: ",prices)
     },[prices])
     
-    console.log("loading en gráfico: ",loading)
+    //console.log("loading en gráfico: ",loading)
     return (
         <div id="grafico" >
             {loading ?<div style={{paddingTop:'30%'}}><Spinner  color='primary'/>   Cargando información...</div>:<div style={{paddingTop:"25%"}}>

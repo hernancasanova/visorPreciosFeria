@@ -3,7 +3,7 @@ const fs = require('fs');
 const request = require('request');
 const puppeteer = require('puppeteer');
 import req from 'express/lib/request';
-import res from 'express/lib/response';
+import res, { type } from 'express/lib/response';
 import app from '../../main';//?
 const express=require('express')
 const PriceSchema = require('../models/prices') 
@@ -11,6 +11,17 @@ const Prices2020Schema = require('../models/2020')
 const router=express.Router()
 const axios= require ('axios')
 const XLSX = require("xlsx")
+const multer = require('multer')
+
+
+const storage = multer.memoryStorage()
+const upload = multer({storage, limits: {
+    fieldNameSize: 255,
+    fileSize: 500000,
+    files: 1,
+    //fields: 1
+  }})
+//dest: 'uploads/' 
 
 const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQI2YwwXBUN8ZYrgxDVsblBKOtVMfH_GMmu05jPXIW7Rw9XPBXdg4iFnHPe1KeRrJ6EU_-PxrMiNxUG/pubhtml?widget=false&headers=false';
 
@@ -34,7 +45,6 @@ const getPrices = async (bovine, year=2022) => {
             $('#'+$(e).attr('id')+' tr').each((j,el) => {
                 // if($(el).parent().text().indexOf(bovine)!=-1 && $(el).attr('class')=='s9' && j%2==0){
                 //     arrPreciosSubastas.push($(el).text());
-                //console.log($(el).text())
                 // }
                 if($(el).children().first().text()==bovine){
                     arrPreciosSubastas.push($(el).children('.s9').first().text())
@@ -59,35 +69,30 @@ const getPrices = async (bovine, year=2022) => {
     return {arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
 }
 
-const getPricesType = async (bovine, year) => {
-    var prices = PriceSchema.find({type: bovine, date: year})
-    return prices;
+
+async function blob_to_wb(blob) {
+    return XLSX.read(await blob.arrayBuffer());
 }
 
-
-const insertData = (year) => {
-    var workbook;
-    if(year==2021){
+const saveData = y => {
+    var workbook, workbookSheets, precio;
+    if(y==2021){
         workbook = XLSX.readFile("./src/routes/PP2021.xlsx");
     }else{
         workbook = XLSX.readFile("./src/routes/PP2020.xlsx");
     }
-    var workbookSheets = workbook.SheetNames;
+    workbookSheets = workbook.SheetNames;
     for(var i = 0; i<workbookSheets.length; i++){
         var sheet = workbookSheets[i];
         var dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
-        var documents=[]
-        var precio;
         dataExcel.forEach((e,m) => {
             if(m>4){
-                if(year==2021){
+                if(y==2021){
                     precio = new PriceSchema(
-                        //{type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']}
                         {type: m+3,date: sheet, price: e['__EMPTY_7']}
                     )
                 }else{
                     precio = new Prices2020Schema(
-                        //{type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']}
                         {type: m+3,date: sheet, price: e['__EMPTY_7']}
                     )
                 }
@@ -95,6 +100,59 @@ const insertData = (year) => {
             }  
         });
     }
+}
+
+const insertData = async () => {
+    try {
+        var testLoadData2021=await PriceSchema.find({})
+        var testLoadData2020=await Prices2020Schema.find({})
+        if(testLoadData2021.length==0){
+            console.log("Se cargaran datos del 2021")
+            saveData(2021)
+        }else if(testLoadData2020.length==0){
+            console.log("Se cargaran datos del 2020")
+            saveData(2020)
+        }
+        /*var years=[2021,2020];
+        for(var y in years){
+            if(years[y]==2021){
+                //const data = await (await fetch(url)).arrayBuffer();
+                //workbook = XLSX.read(file);
+                //console.log("cargando 2021")
+                workbook = XLSX.readFile("./src/routes/PP2021.xlsx");
+            }else{
+                workbook = XLSX.readFile("./src/routes/PP2020.xlsx");
+            }
+            //workbook = await blob_to_wb(file);
+            //workbook = XLSX.read(file.buffer, {type:'buffer'});
+            var workbookSheets = workbook.SheetNames;
+            for(var i = 0; i<workbookSheets.length; i++){
+                var sheet = workbookSheets[i];
+                var dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
+                var precio;
+                dataExcel.forEach((e,m) => {
+                    if(m>4){
+                        if(years[y]==2021){
+                            precio = new PriceSchema(
+                                //{type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']}
+                                {type: m+3,date: sheet, price: e['__EMPTY_7']}
+                            )
+                        }else{
+                            precio = new Prices2020Schema(
+                                //{type: e['FERIA GANADEROS OSORNO S.A. (RECINTO DE PAILLACO)'],date: sheet, price: e['__EMPTY_7']}
+                                {type: m+3,date: sheet, price: e['__EMPTY_7']}
+                            )
+                        }
+                        precio.save()  
+                    }  
+                });
+            }
+        }*/
+        return "200";    
+    } catch (error) {
+        return "500";    
+    }
+    
 } 
 
 const getTypes = async () => {
@@ -118,13 +176,16 @@ router.get('/types', async (req, res) =>{
     res.json({types})
 });
 
-router.get('/importdata/:year', async (req, res) =>{
-    const {year} = req.params
+//router.post('/importdata/:year',upload.single('excel'), async (req, res, next) =>{
+router.get('/importdata', async (req, res, next) =>{
     try{
-        insertData(year)
-        res.send("imported")
+        //const {year} = req.params
+        // var file=req.file;
+        //const resp= await insertData(null,year)//pass a file
+        const resp= await insertData()//pass a file
+        res.json({resp})
     }catch(e){
-        res.send("not imported: "+e)
+        res.json({resp:'500'})
     }
 });
 

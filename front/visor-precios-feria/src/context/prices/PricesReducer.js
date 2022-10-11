@@ -32,7 +32,7 @@ export default (state, action) => {
                 ...state,
                 //loading: true,
                 types: payload.types,
-                bovineSelected: payload.bovine
+                //bovineSelected: payload.bovine
             }
         
         default:
