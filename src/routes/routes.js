@@ -25,7 +25,7 @@ const upload = multer({storage, limits: {
 
 const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQI2YwwXBUN8ZYrgxDVsblBKOtVMfH_GMmu05jPXIW7Rw9XPBXdg4iFnHPe1KeRrJ6EU_-PxrMiNxUG/pubhtml?widget=false&headers=false';
 
-const getPrices = async (bovine, year=2022) => {
+const getPrices = async (bovine, year) => {
     var arrPreciosSubastas = [], arrDates=[], types=[];
     //app.listen(4000)
     if(year==2022){
@@ -56,9 +56,9 @@ const getPrices = async (bovine, year=2022) => {
         var prices;
         //const MyModel = mongoose.model('2021');
         if(year == 2021){
-            prices = await PriceSchema.find({type: bovine});
+            prices = await PriceSchema.find({type: bovine}).sort({"_id": "desc"});
         }else if(year == 2020){
-            prices = await Prices2020Schema.find({type: bovine});
+            prices = await Prices2020Schema.find({type: bovine}).sort({"_id": "desc"});
         }
         prices.forEach(p=>{
             arrPreciosSubastas.push(p.price);
@@ -66,7 +66,11 @@ const getPrices = async (bovine, year=2022) => {
         })
         //return {types, arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()}
     }
-    return {arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
+    if(year==2021 || year==2020){
+        return {arrPreciosSubastas,arrDates};
+    }else{
+        return {arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
+    }
 }
 
 
@@ -75,7 +79,7 @@ async function blob_to_wb(blob) {
 }
 
 const saveData = y => {
-    var workbook, workbookSheets, precio;
+    var workbook, workbookSheets, precio, sheet, dataExcel;
     if(y==2021){
         workbook = XLSX.readFile("./src/routes/PP2021.xlsx");
     }else{
@@ -83,9 +87,9 @@ const saveData = y => {
     }
     workbookSheets = workbook.SheetNames;
     for(var i = 0; i<workbookSheets.length; i++){
-        var sheet = workbookSheets[i];
-        var dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
-        dataExcel.forEach((e,m) => {
+        sheet = workbookSheets[i];
+        dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
+        dataExcel.forEach(async (e,m) => {
             if(m>4){
                 if(y==2021){
                     precio = new PriceSchema(
@@ -95,8 +99,8 @@ const saveData = y => {
                     precio = new Prices2020Schema(
                         {type: m+3,date: sheet, price: e['__EMPTY_7']}
                     )
-                }
-                precio.save()  
+                } 
+                await precio.save();  
             }  
         });
     }
@@ -109,7 +113,8 @@ const insertData = async () => {
         if(testLoadData2021.length==0){
             console.log("Se cargaran datos del 2021")
             saveData(2021)
-        }else if(testLoadData2020.length==0){
+        }
+        if(testLoadData2020.length==0){
             console.log("Se cargaran datos del 2020")
             saveData(2020)
         }

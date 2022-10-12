@@ -37,7 +37,7 @@ const PricesState = (props) => {
     }
 
     const getTypes = async () => {
-        const {types} = await fetch('http://localhost:5000/types/').then(x=>x.json()).catch(error=>console.log("error: ",error));
+        const {types} = await fetch('http://localhost:5000/types').then(x=>x.json()).catch(error=>console.log("error: ",error));
         dispatch({type:'SET_TYPES', payload: {types}});
     }
 
