@@ -1,0 +1,65 @@
+$light: #ffffff;
+$gray: #c4ccde;
+
+.mynav{
+  background-color: $light;
+  padding: 1rem 2rem;
+  text-align:center;
+  /*border-bottom: 1px solid $gray;*/
+  margin:0 auto;
+  width: 100%;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  opacity: 0.8;
+
+}
+#btnVisualizar{
+  margin-left:auto;
+  background-color: black;
+}
+
+.sidebar {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  /*width: 14rem;*/
+  /*height: calc(100vh - 52px);*/
+  height: 35vh;
+  /*border-right: 1px solid $gray;*/
+  /*margin-right: 20px;*/
+  margin-top: 10%;
+  background: rgba(#ffffff,.9);
+  border-radius:0.5rem;
+  /*opacity: 0.9;*/
+  text-align: center;
+}
+
+.sidebar select{
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#g{
+  height:calc(90vh - 52px);
+  vertical-align: center;
+}
+#g p{
+  padding-top: 30%;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size:25px;
+}
+
+#grafico{
+  height:calc(90vh - 52px);
+  margin:0 auto; 
+  width:100%;
+  text-align:center;
+  opacity: 0.9;
+  background-color: white;
+  font-size: 20px;
+  color: black;
+  margin-top: 3%;
+  vertical-align: center;
+  border-radius: 0.5rem;
+}
+body{
+  background: url("../public/background.jpg") no-repeat center center fixed;
+  background-size: cover;
+  /*opacity: 0.5;*/
+}
