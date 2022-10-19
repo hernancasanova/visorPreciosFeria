@@ -1,6 +1,6 @@
 version: "3.5"
 services:
-  app:
+  application:
     # build: .
     build:
       context: ./
@@ -8,10 +8,11 @@ services:
     #image: app
     container_name: api
     restart: unless-stopped
+    command: sh -c "npm install && npm run dev"
     ports: 
       - "5000:5000"
     volumes: 
-      - .:/usr/src/app
+      - ./:/usr/src/app
 
     networks:
       - appan
