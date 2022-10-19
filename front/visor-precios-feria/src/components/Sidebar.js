@@ -39,7 +39,7 @@ const Sidebar = ({ direction, ...args }) => {
     return (
         <div className="sidebar">
             {/* Seleccione el tipo de vacuno a consultar: */}
-            {types.length===0?<Spinner style={{margin: "30% 0% 0% 10%"}}/>:<div className="d-flex p-1">
+            {types.length===0?<Spinner style={{margin: "27% 0% 0% 10%"}}/>:<div className="d-flex p-1">
                 <Container>
                 <Row>
                     <FormGroup>

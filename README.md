@@ -1,19 +1,21 @@
 # visorPreciosFeria
 Excelente aplicación web que permite entregar de manera visualmente fácil la variación de precios de ganado de la feria FEGOSA (Paillaco) a lo largo de los meses.
-Conozca los precios actuales de TODOS los animales subastados. Además, puede conocer información de años anteriores lo que le permitirá tomar mejores decisiones para maximizar sus ganancias.
+Conozca los precios de TODOS los animales subastados durante el año. Además, puede conocer información de años anteriores lo que le permitirá tomar mejores decisiones para maximizar sus ganancias.
 
 # Software requerido
 
 1. Git
-2. node.js
-3. npm (normalmente incluido en la instalación de node.js)
+2. Docker
+3. Docker compose 
 
 # Pasos para ejecutar la aplicación
 
 1.  Clonar repositorio del proyecto: `git clone https://github.com/hernancasanova/visorPreciosFeria.git`
 2.  Ingresar a la carpeta "visorPreciosFeria": `cd visorPreciosFeria`
-3.  Levantar el servidor con el comando `npm run dev`
-4.  Ingresar a la carpeta 'front': `cd front`
-5.  Levantar la aplicación web: `npm start`
+3.  Construir imagen de la API: `docker-compose build application`
+4.  Levantar todos los servicios con el comando `docker-compose up`
+5.  Se debe esperar un poco de tiempo ya que los servicios demoran en estar levantados. Se recomienda esperar al menos 5 minutos antes de avanzar al siguiente punto (6).
 6.  Acceder a la aplicación visitando la siguiente url: `http://localhost:3000`
+
+
 

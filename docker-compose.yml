@@ -1,0 +1,47 @@
+version: "3.5"
+services:
+  application:
+    # build: .
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    #image: app
+    container_name: api
+    restart: unless-stopped
+    command: sh -c "npm install && npm run dev"
+    ports: 
+      - "5000:5000"
+    volumes: 
+      - ./:/usr/src/app
+
+    networks:
+      - appan
+      - default
+  db:
+    container_name: mongo
+    image: mongo:6.0
+    ports: 
+      - "27017:27017"
+    networks:
+      - appan
+      - default
+
+  front:
+    image: "node:14"
+    container_name: frontend
+    user: "node"
+    working_dir: /usr/src/app
+    volumes:
+      - ./front/visor-precios-feria:/usr/src/app
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm start"
+    #command: bash -c "npm install && npm start"
+    networks:
+      - appan
+      - default
+
+networks:
+  appan:
+    name: appan
+    driver: bridge

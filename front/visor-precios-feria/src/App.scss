@@ -2,14 +2,23 @@ $light: #ffffff;
 $gray: #c4ccde;
 
 .mynav{
-  background-color: $light;
-  padding: 1rem 2rem;
+  background-color: transparent;
+  /*padding: 1rem 2rem;*/
   text-align:center;
   /*border-bottom: 1px solid $gray;*/
   margin:0 auto;
   width: 100%;
+  color: black;
+  -webkit-text-fill-color: black;
+  -webkit-text-stroke-color: rgb(221, 99, 23);
+  -webkit-text-stroke-width: 2.00px; 
+  /*-moz-text-shadow: 0 0 5px rgb(248, 251, 48);
+  -webkit-text-shadow: 0 0 5px rgb(248, 251, 48);
+  text-shadow: 0 0 5px rgb(248, 251, 48);*/
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  opacity: 0.8;
+  font-size: 50px;
+  /*opacity: 0.8;
+  font-size: ;*/
 
 }
 #btnVisualizar{
