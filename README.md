@@ -14,7 +14,8 @@ Conozca los precios de TODOS los animales subastados durante el año. Además, p
 2.  Ingresar a la carpeta "visorPreciosFeria": `cd visorPreciosFeria`
 3.  Construir imagen de la API: `docker-compose build application`
 4.  Levantar todos los servicios con el comando `docker-compose up`
-5.  Acceder a la aplicación visitando la siguiente url: `http://localhost:3000`
+5.  Se debe esperar un poco de tiempo ya que los servicios demoran en estar levantados. Se recomienda esperar al menos 5 minutos antes de avanzar al siguiente punto (6).
+6.  Acceder a la aplicación visitando la siguiente url: `http://localhost:3000`
 
 
 
