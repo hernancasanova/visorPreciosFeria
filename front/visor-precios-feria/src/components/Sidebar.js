@@ -5,9 +5,9 @@ import {Row, Container, Button} from 'reactstrap'
 import { Formik } from 'formik';
 
 const Sidebar = ({ direction, ...args }) => {
-    const {setParameters, loadOldYears, bovine, getTypes, types, yearSelected, prices, getPrices, setLoading, loading, loadRegisters} = useContext(PricesContext)
+    const {setParameters, loadOldYears, bovine, getTypes, types, yearSelected, yearOld, prices, getPrices, setLoading, setLoadingTypes, loading, loadingTypes, loadRegisters} = useContext(PricesContext)
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    //const [loading, setLoading] = useState(false);
+    //const [loadingTypes, setLoadingTypes] = useState(false);
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     //console.log("types: ",types)
     /*const loadPrices = async (val) => {
@@ -18,13 +18,22 @@ const Sidebar = ({ direction, ...args }) => {
     const initializer = async () => {
         const loadDone = await loadOldYears()
         if(loadDone=='200'){
-            getTypes();
+            console.log("carga ya realizada")
+            getTypes(2023);
         }
     }
     useEffect(()=>{
         initializer();
     },[])
 
+    useEffect(()=>{
+        let years = ["2020","2021","2022"];
+        if(yearSelected==2023 || (!(years.includes(yearOld) && years.includes(yearSelected)))){//condición para cargar nuevamente los tipos
+            setLoadingTypes()
+            getTypes(yearSelected);
+        }
+    },[yearSelected])
+    
     if(loading){
         getPrices(bovine,yearSelected);
     }
@@ -34,12 +43,17 @@ const Sidebar = ({ direction, ...args }) => {
         var year = document.getElementById('loadPeriod').value;
         loadRegisters(input.files[0], year);
     }
+
+    const changePeriod = period => {
+        var periodOld=yearSelected;
+        setParameters(bovine,period,periodOld)
+    }
     // console.log("bovine: ",bovine)
     // console.log("yearSelected: ",yearSelected)
     return (
         <div className="sidebar">
             {/* Seleccione el tipo de vacuno a consultar: */}
-            {types.length===0?<Spinner style={{margin: "27% 0% 0% 10%"}}/>:<div className="d-flex p-1">
+            {(types.length===0||loadingTypes)?<Spinner style={{margin: "35% 0% 0% 5%"}}/>:<div className="d-flex p-1">
                 <Container>
                 <Row>
                     <FormGroup>
@@ -51,7 +65,7 @@ const Sidebar = ({ direction, ...args }) => {
                         name="selectBovine"
                         type="select"
                         value={bovine}
-                        onChange={(e)=>setParameters(e.target.value.toUpperCase(),yearSelected)}
+                        onChange={(e)=>setParameters(e.target.value.toUpperCase(),yearSelected, yearOld)}
                         >
                             <option value="">
                                 Seleccione
@@ -78,10 +92,15 @@ const Sidebar = ({ direction, ...args }) => {
                         value={yearSelected}
                         //multiple
                         //value={["2020","2021"]}
-                        onChange={(e)=>setParameters(bovine,e.target.value)}
+                        onChange={(e)=>
+                            changePeriod(e.target.value)
+                        }
                         >
                             <option value="">
                                 Seleccione
+                            </option>
+                            <option value="2023">
+                                2023
                             </option>
                             <option value="2022">
                                 2022

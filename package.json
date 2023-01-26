@@ -6,7 +6,7 @@
   "scripts": {
     "babel-node": "babel-node --presets=@babel/preset-env",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec npm run babel-node main.js"
+    "dev": "nodemon --exec npm run babel-node main.js --legacy-watch"
   },
   "repository": {
     "type": "git",

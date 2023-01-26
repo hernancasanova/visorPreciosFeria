@@ -11,7 +11,9 @@ const PricesState = (props) => {
         //bovineSelected: null
         bovineSelected: "",
         yearSelected: "",
-        loading: false
+        yearOld: "",
+        loading: false,
+        loadingTypes: false
     }
 
     
@@ -36,13 +38,17 @@ const PricesState = (props) => {
         dispatch({type:'SET_LOADING', payload: {}});
     }
 
-    const getTypes = async () => {
-        const {types} = await fetch('http://localhost:5000/types').then(x=>x.json()).catch(error=>console.log("error: ",error));
+    const setLoadingTypes = () =>{
+        dispatch({type:'SET_LOADING_TYPES', payload: {}});
+    }
+
+    const getTypes = async year => {
+        const {types} = await fetch('http://localhost:5000/types/'+year).then(x=>x.json()).catch(error=>console.log("error: ",error));
         dispatch({type:'SET_TYPES', payload: {types}});
     }
 
-    const setParameters= (bovine, year) => {//agregar más parametros
-        dispatch({type:'SET_PARAMETERS', payload: {bovine,year}});//agregar periodo
+    const setParameters= (bovine, year, yearOld) => {//agregar más parametros
+        dispatch({type:'SET_PARAMETERS', payload: {bovine,year, yearOld}});//agregar periodo
     }
 
     const loadOldYears = async() => {
@@ -51,7 +57,6 @@ const PricesState = (props) => {
     }
 
     const loadRegisters = async (file, year) => {//en desuso
-        console.log("tear: ", year)
         var data = new FormData()
         data.append('excel',file)
         let msj = await fetch('http://localhost:5000/importdata/'+year, {
@@ -68,9 +73,12 @@ const PricesState = (props) => {
             bovine: state.bovineSelected,
             types: state.types,
             loading: state.loading,
+            loadingTypes: state.loadingTypes,
             yearSelected: state.yearSelected,
+            yearOld: state.yearOld,
             getPrices,
             setLoading,
+            setLoadingTypes,
             setParameters,
             getTypes,
             loadOldYears,

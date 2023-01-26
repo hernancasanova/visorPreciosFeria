@@ -8,6 +8,7 @@ import app from '../../main';//?
 const express=require('express')
 const PriceSchema = require('../models/prices') 
 const Prices2020Schema = require('../models/2020') 
+const Prices2022Schema = require('../models/2022') 
 const router=express.Router()
 const axios= require ('axios')
 const XLSX = require("xlsx")
@@ -23,12 +24,15 @@ const upload = multer({storage, limits: {
   }})
 //dest: 'uploads/' 
 
-const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQI2YwwXBUN8ZYrgxDVsblBKOtVMfH_GMmu05jPXIW7Rw9XPBXdg4iFnHPe1KeRrJ6EU_-PxrMiNxUG/pubhtml?widget=false&headers=false';
+var url;
+const urlAntigua = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQI2YwwXBUN8ZYrgxDVsblBKOtVMfH_GMmu05jPXIW7Rw9XPBXdg4iFnHPe1KeRrJ6EU_-PxrMiNxUG/pubhtml?widget=false&headers=false';
+const urlNueva = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR6u9XsgS-4enVYHmgDMr-81vPRAk0uGbALOQoYS5WssXo_61Y8tUewgxnLgjmG87wwKpT9iAFV-7aL/pubhtml?widget=false&headers=false';
 
 const getPrices = async (bovine, year) => {
     var arrPreciosSubastas = [], arrDates=[], types=[];
     //app.listen(4000)
-    if(year==2022){
+    if(year==2023){
+        url=urlNueva;
         const { data } = await axios.get(url);
         var $ = cheerio.load(data);
         const ids=[];
@@ -55,7 +59,9 @@ const getPrices = async (bovine, year) => {
     }else{
         var prices;
         //const MyModel = mongoose.model('2021');
-        if(year == 2021){
+        if(year == 2022){
+            prices = await Prices2022Schema.find({type: bovine}).sort({"_id": "desc"});
+        }else if(year == 2021){
             prices = await PriceSchema.find({type: bovine}).sort({"_id": "desc"});
         }else if(year == 2020){
             prices = await Prices2020Schema.find({type: bovine}).sort({"_id": "desc"});
@@ -66,7 +72,7 @@ const getPrices = async (bovine, year) => {
         })
         //return {types, arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()}
     }
-    if(year==2021 || year==2020){
+    if(year==2020 || year==2021 || year == 2022){
         return {arrPreciosSubastas,arrDates};
     }else{
         return {arrPreciosSubastas: arrPreciosSubastas.reverse(),arrDates:arrDates.reverse()};
@@ -80,7 +86,9 @@ async function blob_to_wb(blob) {
 
 const saveData = y => {
     var workbook, workbookSheets, precio, sheet, dataExcel;
-    if(y==2021){
+    if(y==2022){
+        workbook = XLSX.readFile("./src/routes/PP2022.xlsx");
+    }else if(y==2021){
         workbook = XLSX.readFile("./src/routes/PP2021.xlsx");
     }else{
         workbook = XLSX.readFile("./src/routes/PP2020.xlsx");
@@ -91,7 +99,11 @@ const saveData = y => {
         dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[sheet])
         dataExcel.forEach(async (e,m) => {
             if(m>4){
-                if(y==2021){
+                if(y==2022){
+                    precio = new Prices2022Schema(
+                        {type: m+3,date: sheet, price: e['__EMPTY_7']}
+                    )
+                }else if(y==2021){
                     precio = new PriceSchema(
                         {type: m+3,date: sheet, price: e['__EMPTY_7']}
                     )
@@ -108,14 +120,19 @@ const saveData = y => {
 
 const insertData = async () => {
     try {
+        var testLoadData2022=await Prices2022Schema.find({})
         var testLoadData2021=await PriceSchema.find({})
         var testLoadData2020=await Prices2020Schema.find({})
+        if(testLoadData2022.length==0){
+            console.log("Se cargarán datos del 2022")
+            saveData(2022)
+        }
         if(testLoadData2021.length==0){
-            console.log("Se cargaran datos del 2021")
+            console.log("Se cargarán datos del 2021")
             saveData(2021)
         }
         if(testLoadData2020.length==0){
-            console.log("Se cargaran datos del 2020")
+            console.log("Se cargarán datos del 2020")
             saveData(2020)
         }
         /*var years=[2021,2020];
@@ -160,7 +177,8 @@ const insertData = async () => {
     
 } 
 
-const getTypes = async () => {
+const getTypes = async year => {
+    url=year==2023?urlNueva:urlAntigua;
     const { data } = await axios.get(url);
     let $ = cheerio.load(data);
     var types = [];
@@ -175,8 +193,9 @@ const getTypes = async () => {
     return {types}
 }
 
-router.get('/types', async (req, res) =>{
-    let {types}= await getTypes();
+router.get('/types/:year', async (req, res) =>{
+    const {year} = req.params;
+    let {types}= await getTypes(year);
     //console.log(types)
     res.json({types})
 });
