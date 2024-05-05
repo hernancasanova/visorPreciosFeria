@@ -5,7 +5,7 @@ import {Row, Container, Button} from 'reactstrap'
 import { Formik } from 'formik';
 
 const Sidebar = ({ direction, ...args }) => {
-    const {setParameters, loadOldYears, bovine, getTypes, types, yearSelected, yearOld, prices, getPrices, setLoading, setLoadingTypes, loading, loadingTypes, loadRegisters} = useContext(PricesContext)
+    const {setParameters, loadOldYears, bovine, getTypes, types, establishment,  yearSelected, yearOld, prices, getPrices, setLoading, setLoadingTypes, loading, loadingTypes, loadRegisters} = useContext(PricesContext)
     const [dropdownOpen, setDropdownOpen] = useState(false);
     //const [loadingTypes, setLoadingTypes] = useState(false);
     const toggle = () => setDropdownOpen((prevState) => !prevState);
@@ -16,10 +16,10 @@ const Sidebar = ({ direction, ...args }) => {
         //console.log("bovine: ",bovine)
     }*/
     const initializer = async () => {
-        const loadDone = await loadOldYears()
+        const loadDone = await loadOldYears()//carga los csvs
         if(loadDone=='200'){
             console.log("carga ya realizada")
-            getTypes(2023);
+            getTypes(2024);//cambiar dependiendo del año actual
         }
     }
     useEffect(()=>{
@@ -35,7 +35,7 @@ const Sidebar = ({ direction, ...args }) => {
     },[yearSelected])
     
     if(loading){
-        getPrices(bovine,yearSelected);
+        getPrices(bovine,yearSelected, establishment);
     }
     const load = () => {
         //var input = document.querySelector('input[type="file"]')
@@ -45,8 +45,15 @@ const Sidebar = ({ direction, ...args }) => {
     }
 
     const changePeriod = period => {
-        var periodOld=yearSelected;
-        setParameters(bovine,period,periodOld)
+        //var periodOld=yearSelected;
+        //console.log("period: ",period)
+        setParameters({bovine,yearSelected:period,yearOld:yearSelected, establishment})
+        //setParameters(bovine,period,periodOld)
+    }
+
+    const changeEstablishment = establishment => {
+        //var periodOld=yearSelected;
+        setParameters({bovine,yearSelected,yearOld, establishment})
     }
     // console.log("bovine: ",bovine)
     // console.log("yearSelected: ",yearSelected)
@@ -58,14 +65,14 @@ const Sidebar = ({ direction, ...args }) => {
                 <Row>
                     <FormGroup>
                         <Label for="selectBovine">
-                        Seleccione tipo de vacuno:
+                        Tipo de vacuno:
                         </Label>
                         <Input
                         id="selectBovine"
                         name="selectBovine"
                         type="select"
                         value={bovine}
-                        onChange={(e)=>setParameters(e.target.value.toUpperCase(),yearSelected, yearOld)}
+                        onChange={(e)=>setParameters({bovine:e.target.value.toUpperCase(),yearSelected,yearOld,establishment})}
                         >
                             <option value="">
                                 Seleccione
@@ -83,14 +90,13 @@ const Sidebar = ({ direction, ...args }) => {
                 <Row>
                     <FormGroup>
                         <Label for="period">
-                        Seleccione periodo:
+                        Periodo:
                         </Label>
                         <Input
                         id="period"
                         name="period"
                         type="select"
                         value={yearSelected}
-                        //multiple
                         //value={["2020","2021"]}
                         onChange={(e)=>
                             changePeriod(e.target.value)
@@ -98,6 +104,9 @@ const Sidebar = ({ direction, ...args }) => {
                         >
                             <option value="">
                                 Seleccione
+                            </option>
+                            <option value="2024">
+                                2024
                             </option>
                             <option value="2023">
                                 2023
@@ -116,10 +125,44 @@ const Sidebar = ({ direction, ...args }) => {
                 </Row>
                 <Row>
                     <FormGroup>
+                        <Label for="establishment">
+                        Establecimiento: (próximamente)
+                        </Label>
+                        <Input
+                        id="establishment"
+                        name="establishment"
+                        type="select"
+                        value={establishment}
+                        //value={["2020","2021"]}
+                        disabled
+                        onChange={(e)=>
+                            changeEstablishment(e.target.value)
+                        }
+                        >
+                            {/* <option value="">
+                                Seleccione
+                            </option> */}
+                            <option value="paillaco">
+                                Paillaco
+                            </option>
+                            <option value="osorno">
+                                Osorno
+                            </option>
+                            <option value="puertomontt">
+                                Puerto montt
+                            </option>
+                            <option value="puertovaras">
+                                Puerto varas
+                            </option>
+                        </Input>
+                    </FormGroup>
+                </Row>
+                <Row>
+                    <FormGroup>
                         <Button
                         id="btnVisualizar"
                         name="btnVisualizar"
-                        disabled={yearSelected=='' || bovine=='' }
+                        disabled={yearSelected=='' || bovine=='' || establishment=='' }
                         //type="submit"
                         onClick={()=>{setLoading()}}
                         //onChange={(e)=>loadPrices(e.target.value)}

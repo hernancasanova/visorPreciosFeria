@@ -12,6 +12,7 @@ const PricesState = (props) => {
         bovineSelected: "",
         yearSelected: "",
         yearOld: "",
+        establishment: "paillaco",
         loading: false,
         loadingTypes: false
     }
@@ -26,9 +27,8 @@ const PricesState = (props) => {
         return pricesInNumber;
     }
 
-    const getPrices = async (bovine, year=2022) => {
-        //console.log("bovine: ",bovine)
-        const data = await fetch('http://localhost:5000/prices/'+bovine+"/"+year).then(x=>x.json()).catch(error=>console.log("error: ",error));
+    const getPrices = async (bovine, year, establishment="paillaco") => {
+        const data = await fetch('http://localhost:5000/prices/'+bovine+"/"+year+"/"+establishment).then(x=>x.json()).catch(error=>console.log("error: ",error));
 
         let pricesConvertes=await convertToNumbers(data.arrPreciosSubastas);
         dispatch({type:'SET_DATA', payload: {pricesConvertes,dates:data.arrDates}});
@@ -42,13 +42,14 @@ const PricesState = (props) => {
         dispatch({type:'SET_LOADING_TYPES', payload: {}});
     }
 
-    const getTypes = async year => {
+    const getTypes = async (year = 2024) => { 
         const {types} = await fetch('http://localhost:5000/types/'+year).then(x=>x.json()).catch(error=>console.log("error: ",error));
         dispatch({type:'SET_TYPES', payload: {types}});
     }
 
-    const setParameters= (bovine, year, yearOld) => {//agregar más parametros
-        dispatch({type:'SET_PARAMETERS', payload: {bovine,year, yearOld}});//agregar periodo
+    const setParameters= (data) => {//agregar más parametros
+        const {bovine,yearSelected,yearOld,establishment} = data;
+        dispatch({type:'SET_PARAMETERS', payload: {bovine,yearSelected, yearOld, establishment}});//agregar periodo
     }
 
     const loadOldYears = async() => {
@@ -76,6 +77,7 @@ const PricesState = (props) => {
             loadingTypes: state.loadingTypes,
             yearSelected: state.yearSelected,
             yearOld: state.yearOld,
+            establishment: state.establishment,
             getPrices,
             setLoading,
             setLoadingTypes,

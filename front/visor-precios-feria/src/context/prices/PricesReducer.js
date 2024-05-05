@@ -31,9 +31,10 @@ export default (state, action) => {
             return {
                 ...state,
                 //loading: true
-                yearSelected:payload.year,
+                yearSelected:payload.yearSelected,
                 yearOld:payload.yearOld, 
-                bovineSelected: payload.bovine
+                bovineSelected: payload.bovine,
+                establishment: payload.establishment
             }
         
         case SET_TYPES:
