@@ -5,7 +5,7 @@ import {Row, Container, Button} from 'reactstrap'
 import { Formik } from 'formik';
 
 const Sidebar = ({ direction, ...args }) => {
-    const {setParameters, loadOldYears, bovine, getTypes, types, establishment,  yearSelected, yearOld, prices, getPrices, setLoading, setLoadingTypes, loading, loadingTypes, loadRegisters} = useContext(PricesContext)
+    const {setParameters, loadOldYears, bovine, getTypes, types, establishment, establishmentPrev,  yearSelected, yearOld, prices, getPrices, setLoading, setLoadingTypes, loading, loadingTypes, loadRegisters} = useContext(PricesContext)
     const [dropdownOpen, setDropdownOpen] = useState(false);
     //const [loadingTypes, setLoadingTypes] = useState(false);
     const toggle = () => setDropdownOpen((prevState) => !prevState);
@@ -19,7 +19,7 @@ const Sidebar = ({ direction, ...args }) => {
         const loadDone = await loadOldYears()//carga los csvs
         if(loadDone=='200'){
             console.log("carga ya realizada")
-            getTypes(2024);//cambiar dependiendo del año actual
+            getTypes(2024,establishment);//cambiar dependiendo del año actual
         }
     }
     useEffect(()=>{
@@ -28,14 +28,14 @@ const Sidebar = ({ direction, ...args }) => {
 
     useEffect(()=>{
         let years = ["2020","2021","2022"];
-        if(yearSelected==2023 || (!(years.includes(yearOld) && years.includes(yearSelected)))){//condición para cargar nuevamente los tipos
+        if(yearSelected==2023 || (!(years.includes(yearOld) && years.includes(yearSelected))) || establishment=="osorno" ){//condición para cargar nuevamente los tipos
             setLoadingTypes()
-            getTypes(yearSelected);
+            getTypes(yearSelected,establishment);
         }
-    },[yearSelected])
+    },[yearSelected,establishment])
     
     if(loading){
-        getPrices(bovine,yearSelected, establishment);
+        getPrices(bovine,yearSelected,establishment);
     }
     const load = () => {
         //var input = document.querySelector('input[type="file"]')
@@ -51,9 +51,9 @@ const Sidebar = ({ direction, ...args }) => {
         //setParameters(bovine,period,periodOld)
     }
 
-    const changeEstablishment = establishment => {
+    const changeEstablishment = establishmentSelected => {
         //var periodOld=yearSelected;
-        setParameters({bovine,yearSelected,yearOld, establishment})
+        setParameters({bovine,yearSelected,yearOld, establishment:establishmentSelected, establishmentPrev:establishment})
     }
     // console.log("bovine: ",bovine)
     // console.log("yearSelected: ",yearSelected)
@@ -108,16 +108,16 @@ const Sidebar = ({ direction, ...args }) => {
                             <option value="2024">
                                 2024
                             </option>
-                            <option value="2023">
+                            <option value="2023" disabled={establishment!="paillaco"}>
                                 2023
                             </option>
-                            <option value="2022">
+                            <option value="2022" disabled={establishment!="paillaco"}>
                                 2022
                             </option>
-                            <option value="2021">
+                            <option value="2021" disabled={establishment!="paillaco"}>
                                 2021
                             </option>
-                            <option value="2020">
+                            <option value="2020" disabled={establishment!="paillaco"}>
                                 2020
                             </option>
                         </Input>
@@ -134,7 +134,6 @@ const Sidebar = ({ direction, ...args }) => {
                         type="select"
                         value={establishment}
                         //value={["2020","2021"]}
-                        disabled
                         onChange={(e)=>
                             changeEstablishment(e.target.value)
                         }
@@ -148,10 +147,10 @@ const Sidebar = ({ direction, ...args }) => {
                             <option value="osorno">
                                 Osorno
                             </option>
-                            <option value="puertomontt">
+                            <option disabled value="puertomontt">
                                 Puerto montt
                             </option>
-                            <option value="puertovaras">
+                            <option disabled value="puertovaras">
                                 Puerto varas
                             </option>
                         </Input>
@@ -162,7 +161,7 @@ const Sidebar = ({ direction, ...args }) => {
                         <Button
                         id="btnVisualizar"
                         name="btnVisualizar"
-                        disabled={yearSelected=='' || bovine=='' || establishment=='' }
+                        disabled={yearSelected=='' || bovine=='' || establishment=='' || (establishment!="paillaco" && yearSelected!="2024") }
                         //type="submit"
                         onClick={()=>{setLoading()}}
                         //onChange={(e)=>loadPrices(e.target.value)}

@@ -8,8 +8,9 @@ export default (state, action) => {
             return {
                 ...state,
                 loading: false,
-                prices: [payload.pricesConvertes],
-                dates: [payload.dates]
+                prices: [...state.prices, payload.pricesConvertes],
+                dates: [payload.dates],
+                establishments:[...state.establishments, payload.establishment]
             }
         case SET_LOADING: 
             return {

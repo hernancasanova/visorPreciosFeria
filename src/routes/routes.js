@@ -31,13 +31,20 @@ const urlAntigua = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQI2YwwXBUN8
 //https://docs.google.com/spreadsheets/d/e/2PACX-1vTSo-1KPD56-n3r2gIuoGZM4QE03cWYygWPM7MJg6u3gq4YObW5P30AUWhyRk_b9JC4kmi8dL8km3N8/pubhtml?widget=true&headers=false
 //url 2024
 const urlAñoActual='https://docs.google.com/spreadsheets/d/e/2PACX-1vRUsoWLd4Zf5SujuyD8Gi9BFhSYzDlX94o5L_GexvhXrGwakGHUWItzdPqIlrAdMGCOISDCPNchhqdX/pubhtml?widget=false&headers=false';
+const urlAñoActualOsorno='https://docs.google.com/spreadsheets/d/e/2PACX-1vR1bQGPP723u3NzMw7ohonbPod9W47IQHEN3EB1kMu3hlOVQmrTUBHXgCqteynWtbb63be36U4-wo4B/pubhtml?widget=false&headers=false';
 
-const getPrices = async (bovine, year) => {
+const getPrices = async (bovine, year, stablishment) => {
     var arrPreciosSubastas = [], arrDates=[], types=[];
     //app.listen(4000)
     if(year==2024){
-        const { data } = await axios.get(urlAñoActual);
-        var $ = cheerio.load(data);
+        //const data;
+        if(stablishment==="osorno"){
+            const {data} = await axios.get(urlAñoActualOsorno);
+            var $ = cheerio.load(data);
+        }else{
+            const { data } = await axios.get(urlAñoActual);
+            var $ = cheerio.load(data);
+        }
         const ids=[];
         $('#sheet-menu li a').each((i,e)=>{
             arrDates.push($(e).text())
@@ -54,7 +61,7 @@ const getPrices = async (bovine, year) => {
                 //     arrPreciosSubastas.push($(el).text());
                 // }
                 if($(el).children().first().text()==bovine){
-                    arrPreciosSubastas.push($(el).children('.s9').first().text())
+                    stablishment!="osorno"?arrPreciosSubastas.push($(el).children('.s9').first().text()):arrPreciosSubastas.push($(el).children('.s10').first().text())
                 }
             });
         });
@@ -193,8 +200,17 @@ const insertData = async () => {
     
 } 
 
-const getTypes = async year => {
-    url=year==2024?urlAñoActual:urlAntigua;//verificar
+const getTypes = async (year,stablishment) => {
+    var url;
+    if(year==2024 && stablishment!="osorno"){
+        url=urlAñoActual;
+    }else if(stablishment=="osorno"){
+        url=urlAñoActualOsorno;
+    }else{
+        url=urlAntigua;
+    }
+    //url=(year==2024)?urlAñoActual:urlAntigua;//verificar
+    console.log("URL: ",url)
     const { data } = await axios.get(url);
     let $ = cheerio.load(data);
     var types = [];
@@ -209,9 +225,9 @@ const getTypes = async year => {
     return {types}
 }
 
-router.get('/types/:year', async (req, res) =>{
-    const {year} = req.params;
-    let {types}= await getTypes(year);
+router.get('/types/:year/:stablishment', async (req, res) =>{
+    const {year,stablishment} = req.params;
+    let {types}= await getTypes(year, stablishment);
     //console.log(types)
     res.json({types})
 });
@@ -237,7 +253,7 @@ router.get('/prices/:bovine/:year/:stablishment', async (req,res)=>{
     //     bovine='TERNEROS'
     // }
 
-    let { arrPreciosSubastas, arrDates, types}= await getPrices(bovine, year);
+    let { arrPreciosSubastas, arrDates, types}= await getPrices(bovine, year, stablishment);
     res.json({arrPreciosSubastas, arrDates, types})
 
     //let {types}= await getTypes();

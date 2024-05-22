@@ -10,9 +10,11 @@ const PricesState = (props) => {
         types:[],
         //bovineSelected: null
         bovineSelected: "",
-        yearSelected: "",
+        yearSelected: "2024",
         yearOld: "",
+        establishments:[],
         establishment: "paillaco",
+        establishmentPrev: "",
         loading: false,
         loadingTypes: false
     }
@@ -27,11 +29,11 @@ const PricesState = (props) => {
         return pricesInNumber;
     }
 
-    const getPrices = async (bovine, year, establishment="paillaco") => {
+    const getPrices = async (bovine, year, establishment) => {
         const data = await fetch('http://localhost:5000/prices/'+bovine+"/"+year+"/"+establishment).then(x=>x.json()).catch(error=>console.log("error: ",error));
 
         let pricesConvertes=await convertToNumbers(data.arrPreciosSubastas);
-        dispatch({type:'SET_DATA', payload: {pricesConvertes,dates:data.arrDates}});
+        dispatch({type:'SET_DATA', payload: {pricesConvertes,dates:data.arrDates,establishment}});
     }
 
     const setLoading = () =>{
@@ -42,8 +44,8 @@ const PricesState = (props) => {
         dispatch({type:'SET_LOADING_TYPES', payload: {}});
     }
 
-    const getTypes = async (year = 2024) => { 
-        const {types} = await fetch('http://localhost:5000/types/'+year).then(x=>x.json()).catch(error=>console.log("error: ",error));
+    const getTypes = async (year, establishment) => { 
+        const {types} = await fetch('http://localhost:5000/types/'+year+'/'+establishment).then(x=>x.json()).catch(error=>console.log("error: ",error));
         dispatch({type:'SET_TYPES', payload: {types}});
     }
 
@@ -77,7 +79,9 @@ const PricesState = (props) => {
             loadingTypes: state.loadingTypes,
             yearSelected: state.yearSelected,
             yearOld: state.yearOld,
+            establishments: state.establishments,
             establishment: state.establishment,
+            establishmentPrev:state.establishmentPrev,
             getPrices,
             setLoading,
             setLoadingTypes,

@@ -9,10 +9,21 @@ Exporting(Highcharts);
 //var Highcharts = require('highcharts');
  
 const Highchart = () => {
-    const {prices, dates, bovine, loading, yearSelected, types} = useContext(PricesContext)
+    const {prices, dates, bovine, establishments, loading, yearSelected, types} = useContext(PricesContext)
     //var bovineSelected = types.length>0?document.getElementById('selectBovine').options[bovineSelected.selectedIndex].text: "";
-    const loadGraph = (p,dates) =>{
+    const loadGraph = (p,dates,arrEstablishments) =>{
         //console.log("p: ",p)
+        var colors=["#8085e9","#f15c80"]
+        var s=[];
+        p.map((pr,i)=>{
+            s.push({
+                //type: 'scatter',
+                name: arrEstablishments[i],
+                data: pr,
+                color:colors[i]
+            });
+        })
+        console.log("S: ",arrEstablishments)
         Highcharts.chart('g', {
             // options - see https://api.highcharts.com/highcharts
             title: {
@@ -61,10 +72,7 @@ const Highchart = () => {
                 }
             },
         
-            series: [{
-                name: yearSelected,
-                data: p
-            }],
+            series: s,
         
             responsive: {
                 rules: [{
@@ -82,43 +90,15 @@ const Highchart = () => {
             }
           });
     }
-    //useEffect(()=>{
-        //console.log("bovine en highcharts: ",bovine)
-        //getPrices(bovine);
-        // fetch('http://localhost:5000/prices')
-        // .then(x=>x.json())
-        // .then(data=>{
-        //     let pricesConvertes=convertToNumbers(data.arrPreciosSubastas)
-        //     //sleep(1000);
-        //     setPrices(pricesConvertes)
-        //     loadGraph(prices, data.arrDates)
-        // })
-        // .catch(error=>console.log("error: ",error));
-
-        // const fetchData = async () => {
-        //     const data = await fetch('http://localhost:5000/prices').then(x=>x.json()).catch(error=>console.log("error: ",error));
-        //     console.log("data: ",data)
-        //     let pricesConvertes=await convertToNumbers(data.arrPreciosSubastas)
-        //     setPrices([...prices, pricesConvertes])
-        //     setDates([...dates, data.arrDates])
-            //dates=data.dates;
-            //loadGraph(prices, data.arrDates)
-            //loadGraph(pricesConvertes, data.arrDates)
-        //}
-        //fetchData();
-        // if(prices.length>0 && dates.length>0){
-        //     loadGraph(prices[0], dates[0]) 
-        // }
-        
-    //},[])
 
     useEffect(()=>{
         // console.log("se ha cambiado a: ",bovine)
         // console.log("valor de prices: ",prices)
         // console.log("valor de dates: ",dates)
         //loadGraph(prices[0], dates[0])
-        if(prices.length>0 && dates.length>0){
-            loadGraph(prices[0], dates[0]) 
+        if(prices.length>0 ){
+            //loadGraph(prices[0], dates[0]) 
+            loadGraph(prices,dates[0],establishments)
         }
         //console.log("prices: ",prices)
     },[prices])
